@@ -231,7 +231,7 @@
         
         // 数据概览
         async function loadDashboard() {
-            const data = await api('/stats');
+            const data = await api('/admin/stats');
             document.getElementById('pageContent').innerHTML = `
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -263,7 +263,7 @@
         
         // 用户管理
         async function loadUsers() {
-            const data = await api('/users');
+            const data = await api('/admin/users');
             document.getElementById('pageContent').innerHTML = `
                 <div style="margin-bottom: 16px; display: flex; gap: 10px;">
                     <input type="text" class="form-input" id="userKeyword" placeholder="搜索昵称/openid" style="width: 200px;">
@@ -316,7 +316,7 @@
         
         // 兑换码管理
         async function loadCodes() {
-            const data = await api('/codes');
+            const data = await api('/admin/codes');
             document.getElementById('pageContent').innerHTML = `
                 <div style="margin-bottom: 16px;">
                     <button class="btn" style="width: auto; padding: 0 20px;" onclick="showCreateCodeModal()">+ 生成兑换码</button>
@@ -373,7 +373,7 @@
                 const maxUse = parseInt(document.getElementById('codeMaxUse').value);
                 const count = parseInt(document.getElementById('codeCount').value);
                 const expiredAt = document.getElementById('codeExpire').value || null;
-                const data = await api('/codes', {
+                const data = await api('/admin/codes', {
                     method: 'POST',
                     body: JSON.stringify({ amount, maxUse, count, expiredAt })
                 });
@@ -393,7 +393,7 @@
         
         // 起名记录
         async function loadRecords() {
-            const data = await api('/records');
+            const data = await api('/admin/records');
             document.getElementById('pageContent').innerHTML = `
                 <div style="margin-bottom: 16px; display: flex; gap: 10px;">
                     <select class="form-input" id="recordGender" style="width: 120px;" onchange="loadRecords()">
@@ -426,7 +426,7 @@
         
         // 系统配置
         async function loadConfigs() {
-            const data = await api('/configs');
+            const data = await api('/admin/configs');
             document.getElementById('pageContent').innerHTML = `
                 <div class="config-item">
                     <label>AI API 地址</label>
@@ -451,7 +451,7 @@
                 { key: 'ai_model', value: document.getElementById('configModel').value, description: 'AI 模型名称' }
             ];
             for (const config of configs) {
-                await api('/configs', { method: 'POST', body: JSON.stringify(config) });
+                await api('/admin/configs', { method: 'POST', body: JSON.stringify(config) });
             }
             showToast('配置保存成功');
         }
