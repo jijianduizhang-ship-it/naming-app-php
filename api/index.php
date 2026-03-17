@@ -113,6 +113,143 @@ if ($path === 'redeem' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+// AI生成名字接口
+if ($path === 'ai-generate-names' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $surname = $data['surname'] ?? '';
+    $gender = $data['gender'] ?? 'boy';
+    $birthday = $data['birthday'] ?? '';
+    $nameLength = intval($data['nameLength'] ?? 3);
+    
+    if (!$surname || !$birthday) {
+        echo json_encode(['error' => '缺少必要参数']);
+        exit;
+    }
+    
+    // 从数据库获取API配置
+    $conn = getDB();
+    $result = $conn->query('SELECT config_key, value FROM configs');
+    $configs = [];
+    while ($row = $result->fetch_assoc()) {
+        $configs[$row['config_key']] = $row['value'];
+    }
+    $conn->close();
+    
+    $apiUrl = $configs['ai_api_url'] ?? 'https://api.deepseek.com/v1/chat/completions';
+    $apiKey = $configs['ai_api_key'] ?? 'sk-c2f2ce816b3f43b09b6740f702ad3f36';
+    $model = $configs['ai_model'] ?? 'deepseek-chat';
+    
+    $genderText = $gender === 'boy' ? '男孩' : '女孩';
+    $nameCharCount = $nameLength === 2 ? '1个' : '2个';
+    
+    $prompt = "你是一个专业的起名大师。请根据以下信息为宝宝生成10个寓意美好的名字：
+1. 姓氏：$surname
+2. 性别：$genderText
+3. 出生日期：$birthday
+4. 偏好：寓意美好、诗词典故、五行平衡
+5. 名字字数：{$nameLength}个字（即名{$nameCharCount}字）
+要求：
+- 名字要富有诗意、出自诗词典故
+- 每个名字要有寓意解释和出处
+- 格式为JSON数组，每个名字包含：name(名字，即名的部分，不含姓氏)、meaning(寓意)、source(出处)、wuxing(五行)
+- 只要返回JSON，不要其他内容";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+        'model' => $model,
+        'messages' => [
+            ['role' => 'system', 'content' => '你是一个专业的起名大师，擅长根据诗词典故为宝宝起名。请用JSON格式返回结果。'],
+            ['role' => 'user', 'content' => $prompt]
+        ],
+        'temperature' => 0.9,
+        'max_tokens' => 2000
+    ]));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $apiKey
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode === 200 && $response) {
+        $resultData = json_decode($response, true);
+        if (isset($resultData['choices'][0]['message']['content'])) {
+            $content = $resultData['choices'][0]['message']['content'];
+            // 提取JSON
+            preg_match('/\[.*\]/s', $content, $matches);
+            if ($matches) {
+                $names = json_decode($matches[0], true);
+                if ($names) {
+                    echo json_encode(['names' => $names, 'source' => 'ai']);
+                    exit;
+                }
+            }
+        }
+    }
+    
+    // 失败则返回本地数据
+    $localNames = $gender === 'boy' ? [
+        ['name' => '浩然', 'meaning' => '正气广大，胸怀宽广', 'source' => '《孟子》', 'wuxing' => '水', 'score' => 98],
+        ['name' => '明轩', 'meaning' => '聪明睿智，气宇轩昂', 'source' => '成语', 'wuxing' => '土', 'score' => 96],
+        ['name' => '思远', 'meaning' => '思虑深远，志存高远', 'source' => '《诗经》', 'wuxing' => '木', 'score' => 95],
+        ['name' => '一诺', 'meaning' => '一言九鼎，诚实守信', 'source' => '成语', 'wuxing' => '火', 'score' => 97],
+        ['name' => '宇航', 'meaning' => '遨游宇宙，探索未知', 'source' => '现代', 'wuxing' => '土', 'score' => 94],
+        ['name' => '子墨', 'meaning' => '文房四宝，诗书传家', 'source' => '诗词', 'wuxing' => '土', 'score' => 92]
+    ] : [
+        ['name' => '诗涵', 'meaning' => '诗情画意，含苞待放', 'source' => '《诗经》', 'wuxing' => '水', 'score' => 97],
+        ['name' => '雨晴', 'meaning' => '雨过天晴，清新美好', 'source' => '诗词', 'wuxing' => '火', 'score' => 96],
+        ['name' => '欣怡', 'meaning' => '欣喜愉悦，心旷神怡', 'source' => '诗词', 'wuxing' => '土', 'score' => 95],
+        ['name' => '梓萱', 'meaning' => '生机勃勃，美丽坚强', 'source' => '诗词', 'wuxing' => '木', 'score' => 94],
+        ['name' => '雅楠', 'meaning' => '高雅大方，坚韧不拔', 'source' => '成语', 'wuxing' => '木', 'score' => 95],
+        ['name' => '梦琪', 'meaning' => '梦回唐朝，美玉无瑕', 'source' => '诗词', 'wuxing' => '木', 'score' => 94]
+    ];
+    
+    echo json_encode(['names' => $localNames, 'source' => 'local']);
+    exit;
+}
+    
+    // 内置兑换码
+    $builtinCodes = [
+        'TESTVIP' => 10,
+        'FREE666' => 5
+    ];
+    
+    if (isset($builtinCodes[$code])) {
+        echo json_encode(['success' => true, 'message' => '兑换成功', 'amount' => $builtinCodes[$code]]);
+        exit;
+    }
+    
+    // 数据库查询
+    $conn = getDB();
+    $stmt = $conn->prepare('SELECT * FROM redeem_codes WHERE code = ? AND status = 1');
+    $stmt->bind_param('s', $code);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($row = $result->fetch_assoc()) {
+        if ($row['expired_at'] && strtotime($row['expired_at']) < time()) {
+            echo json_encode(['success' => false, 'message' => '兑换码已过期']);
+        } elseif ($row['max_use'] > 0 && $row['used_count'] >= $row['max_use']) {
+            echo json_encode(['success' => false, 'message' => '兑换码已使用完']);
+        } else {
+            $update = $conn->prepare('UPDATE redeem_codes SET used_count = used_count + 1 WHERE id = ?');
+            $update->bind_param('i', $row['id']);
+            $update->execute();
+            echo json_encode(['success' => true, 'message' => '兑换成功', 'amount' => $row['amount']]);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => '兑换码无效']);
+    }
+    $conn->close();
+    exit;
+}
+
 // 管理后台接口需要验证
 $token = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
 $token = str_replace('Bearer ', '', $token);
