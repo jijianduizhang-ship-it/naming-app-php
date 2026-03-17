@@ -16,6 +16,12 @@ $config = [
     'database' => 'xingming'
 ];
 
+// 获取请求路径
+$requestUri = $_SERVER['REQUEST_URI'];
+$path = parse_url($requestUri, PHP_URL_PATH);
+$path = str_replace('/api/index.php', '', $path);
+$path = trim($path, '/');
+
 // 连接数据库
 function getDB() {
     global $config;
@@ -28,7 +34,7 @@ function getDB() {
 }
 
 // 登录
-if ($_SERVER['REQUEST_URI'] === '/api/admin/login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($path === 'admin/login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
     $username = $data['username'] ?? '';
     $password = $data['password'] ?? '';
@@ -41,7 +47,7 @@ if ($_SERVER['REQUEST_URI'] === '/api/admin/login' && $_SERVER['REQUEST_METHOD']
     // 内置管理员
     $builtinAdmin = [
         'username' => 'admin',
-        'password' => '$2b$10$x/mh8FfBDgFTXRjyewvjhegKvp9afwwBtv5sXD1SEzDajFe2zhce6' // admin123
+        'password' => '$2b$10$x/mh8FfBDgFTXRjyewvjhegKvp9afwwBtv5sXD1SEzDajFe2zhce6'
     ];
     
     if ($username === $builtinAdmin['username'] && password_verify($password, $builtinAdmin['password'])) {
@@ -62,7 +68,7 @@ function verifyToken($token) {
 }
 
 // 兑换接口
-if ($_SERVER['REQUEST_URI'] === '/api/redeem' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($path === 'redeem' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
     $code = strtoupper($data['code'] ?? '');
     
@@ -90,13 +96,11 @@ if ($_SERVER['REQUEST_URI'] === '/api/redeem' && $_SERVER['REQUEST_METHOD'] === 
     $result = $stmt->get_result();
     
     if ($row = $result->fetch_assoc()) {
-        // 检查过期和使用次数
         if ($row['expired_at'] && strtotime($row['expired_at']) < time()) {
             echo json_encode(['success' => false, 'message' => '兑换码已过期']);
         } elseif ($row['max_use'] > 0 && $row['used_count'] >= $row['max_use']) {
             echo json_encode(['success' => false, 'message' => '兑换码已使用完']);
         } else {
-            // 更新使用次数
             $update = $conn->prepare('UPDATE redeem_codes SET used_count = used_count + 1 WHERE id = ?');
             $update->bind_param('i', $row['id']);
             $update->execute();
@@ -109,16 +113,19 @@ if ($_SERVER['REQUEST_URI'] === '/api/redeem' && $_SERVER['REQUEST_METHOD'] === 
     exit;
 }
 
-// 获取用户列表
-if (preg_match('#/api/admin/users(\?.*)?$#', $_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
-    $token = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    $token = str_replace('Bearer ', '', $token);
-    
+// 管理后台接口需要验证
+$token = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+$token = str_replace('Bearer ', '', $token);
+
+if (strpos($path, 'admin/') === 0) {
     if (!verifyToken($token)) {
         echo json_encode(['error' => '未登录']);
         exit;
     }
-    
+}
+
+// 获取用户列表
+if ($path === 'admin/users' && $_SERVER['REQUEST_METHOD'] === 'GET') {
     $conn = getDB();
     $result = $conn->query('SELECT * FROM users ORDER BY created_at DESC LIMIT 100');
     $users = [];
@@ -131,15 +138,7 @@ if (preg_match('#/api/admin/users(\?.*)?$#', $_SERVER['REQUEST_URI']) && $_SERVE
 }
 
 // 获取兑换码列表
-if (preg_match('#/api/admin/codes(\?.*)?$#', $_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
-    $token = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    $token = str_replace('Bearer ', '', $token);
-    
-    if (!verifyToken($token)) {
-        echo json_encode(['error' => '未登录']);
-        exit;
-    }
-    
+if ($path === 'admin/codes' && $_SERVER['REQUEST_METHOD'] === 'GET') {
     $conn = getDB();
     $result = $conn->query('SELECT rc.*, a.username as creator_name FROM redeem_codes rc LEFT JOIN admins a ON rc.created_by = a.id ORDER BY rc.created_at DESC LIMIT 100');
     $codes = [];
@@ -152,15 +151,7 @@ if (preg_match('#/api/admin/codes(\?.*)?$#', $_SERVER['REQUEST_URI']) && $_SERVE
 }
 
 // 生成兑换码
-if ($_SERVER['REQUEST_URI'] === '/api/admin/codes' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $token = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    $token = str_replace('Bearer ', '', $token);
-    
-    if (!verifyToken($token)) {
-        echo json_encode(['error' => '未登录']);
-        exit;
-    }
-    
+if ($path === 'admin/codes' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
     $amount = intval($data['amount'] ?? 10);
     $maxUse = intval($data['maxUse'] ?? 1);
@@ -183,15 +174,7 @@ if ($_SERVER['REQUEST_URI'] === '/api/admin/codes' && $_SERVER['REQUEST_METHOD']
 }
 
 // 获取统计数据
-if ($_SERVER['REQUEST_URI'] === '/api/admin/stats' && $_SERVER['REQUEST_METHOD'] === 'GET') {
-    $token = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    $token = str_replace('Bearer ', '', $token);
-    
-    if (!verifyToken($token)) {
-        echo json_encode(['error' => '未登录']);
-        exit;
-    }
-    
+if ($path === 'admin/stats' && $_SERVER['REQUEST_METHOD'] === 'GET') {
     $conn = getDB();
     
     $users = $conn->query('SELECT COUNT(*) as total, SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active FROM users')->fetch_assoc();
@@ -211,15 +194,7 @@ if ($_SERVER['REQUEST_URI'] === '/api/admin/stats' && $_SERVER['REQUEST_METHOD']
 }
 
 // 获取配置
-if ($_SERVER['REQUEST_URI'] === '/api/admin/configs' && $_SERVER['REQUEST_METHOD'] === 'GET') {
-    $token = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    $token = str_replace('Bearer ', '', $token);
-    
-    if (!verifyToken($token)) {
-        echo json_encode(['error' => '未登录']);
-        exit;
-    }
-    
+if ($path === 'admin/configs' && $_SERVER['REQUEST_METHOD'] === 'GET') {
     $conn = getDB();
     $result = $conn->query('SELECT config_key, value FROM configs');
     $configs = [];
@@ -241,5 +216,5 @@ function generateCode() {
     return $code;
 }
 
-// 默认返回
-echo json_encode(['message' => '智能起名 API']);
+// 默认
+echo json_encode(['message' => '智能起名 API', 'path' => $path]);
