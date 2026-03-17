@@ -34,7 +34,7 @@ function getDB() {
 }
 
 // 登录
-if ($path === 'admin/login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if (in_array($path, ['admin/login', 'login']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
     $username = $data['username'] ?? '';
     $password = $data['password'] ?? '';
