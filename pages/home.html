@@ -78,10 +78,9 @@
         .tab-item.active { color: #C41E3A; }
         .tab-item.active .tab-dot { opacity: 1; transform: scale(1); }
         .tab-dot { opacity: 0; transform: scale(0); transition: all 0.3s; }
+        .scroll-fade { mask-image: linear-gradient(to bottom, black 85%, transparent 100%); }
         .badge-pulse { animation: pulse 2s ease-in-out infinite; }
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
-        .article-img { width: 112px; height: 96px; object-fit: cover; flex-shrink: 0; }
-        @media (max-width: 430px) { .article-img { width: 96px; height: 80px; } }
     </style>
 </head>
 <body class="pb-20">
@@ -177,6 +176,7 @@
             <span class="text-primary-500 text-xs">全部套餐 <i class="fas fa-chevron-right text-xs"></i></span>
         </div>
         <div class="flex space-x-3 overflow-x-auto pb-2" style="scrollbar-width:none;">
+            <!-- 套餐1 -->
             <div class="flex-shrink-0 w-40 bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl p-4 border border-red-100/50">
                 <div class="flex items-center justify-between mb-3">
                     <span class="bg-primary-500 text-white text-xs px-2 py-0.5 rounded-full">热门</span>
@@ -189,6 +189,7 @@
                     <span class="text-dark-300 text-xs line-through">¥59</span>
                 </div>
             </div>
+            <!-- 套餐2 -->
             <div class="flex-shrink-0 w-40 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl p-4 border border-amber-100/50 relative">
                 <div class="absolute -top-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-gold-500 to-gold-400 text-white text-xs px-3 py-0.5 rounded-full shadow-md">推荐</div>
                 <div class="flex items-center justify-between mb-3 mt-2">
@@ -202,6 +203,7 @@
                     <span class="text-dark-300 text-xs line-through">¥99</span>
                 </div>
             </div>
+            <!-- 套餐3 -->
             <div class="flex-shrink-0 w-40 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-4 border border-purple-100/50">
                 <div class="flex items-center justify-between mb-3">
                     <span class="bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full">尊享</span>
@@ -217,14 +219,33 @@
         </div>
     </div>
 
-    <!-- 起名知识（动态加载） -->
+    <!-- 起名知识 -->
     <div class="px-5 mb-5">
         <div class="flex items-center justify-between mb-3">
             <h2 class="font-serif-cn text-dark-800 text-base font-bold">起名知识</h2>
-            <span class="text-primary-500 text-xs cursor-pointer" onclick="window.location.href='/pages/knowledge.html'">更多 <i class="fas fa-chevron-right text-xs"></i></span>
+            <span class="text-primary-500 text-xs">更多 <i class="fas fa-chevron-right text-xs"></i></span>
         </div>
-        <div class="space-y-3" id="knowledgeArticles">
-            <!-- JS 动态填充 -->
+        <div class="space-y-3">
+            <div class="bg-white rounded-2xl overflow-hidden card-shadow flex">
+                <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=200&h=150&fit=crop" class="w-28 h-24 object-cover" alt="article">
+                <div class="p-3 flex-1 flex flex-col justify-between">
+                    <h4 class="text-dark-800 text-sm font-medium leading-snug line-clamp-2">生辰八字起名的五大核心要素，新手父母必读</h4>
+                    <div class="flex items-center space-x-2 text-dark-300 text-xs">
+                        <span><i class="far fa-eye mr-1"></i>2.3k</span>
+                        <span><i class="far fa-heart mr-1"></i>186</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl overflow-hidden card-shadow flex">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=150&fit=crop" class="w-28 h-24 object-cover" alt="article">
+                <div class="p-3 flex-1 flex flex-col justify-between">
+                    <h4 class="text-dark-800 text-sm font-medium leading-snug line-clamp-2">五行缺什么就补什么？这些误区你一定要知道</h4>
+                    <div class="flex items-center space-x-2 text-dark-300 text-xs">
+                        <span><i class="far fa-eye mr-1"></i>1.8k</span>
+                        <span><i class="far fa-heart mr-1"></i>142</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -295,46 +316,8 @@
     </div>
 
     <script>
-        const API_BASE = '/api';
-
         function goPage(url) { window.location.href = url; }
-
-        function formatNumber(n) {
-            if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
-            return n;
-        }
-
-        async function loadKnowledgeArticles() {
-            const container = document.getElementById('knowledgeArticles');
-            try {
-                const res = await fetch(API_BASE + '/article?featured=1&pageSize=3');
-                const data = await res.json();
-                if (!data.list || data.list.length === 0) {
-                    container.innerHTML = '<div class="text-center text-dark-300 text-sm py-4">暂无文章</div>';
-                    return;
-                }
-                container.innerHTML = data.list.map(article => {
-                    const img = article.cover_image || 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=200&h=150&fit=crop';
-                    const title = article.title || '';
-                    const summary = article.summary || '';
-                    const views = formatNumber(article.views || 0);
-                    const likes = formatNumber(article.likes || 0);
-                    const id = article.id;
-                    return '<div class="bg-white rounded-2xl overflow-hidden card-shadow flex cursor-pointer" onclick="window.location.href=\'knowledge.html?id=' + id + '\'">' +
-                        '<img src="' + img + '" class="article-img" alt="' + title + '" onerror="this.src=\'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=200&h=150&fit=crop\'">' +
-                        '<div class="p-3 flex-1 flex flex-col justify-between">' +
-                        '<h4 class="text-dark-800 text-sm font-medium leading-snug line-clamp-2">' + title + '</h4>' +
-                        '<div class="flex items-center space-x-2 text-dark-300 text-xs">' +
-                        '<span><i class="far fa-eye mr-1"></i>' + views + '</span>' +
-                        '<span><i class="far fa-heart mr-1"></i>' + likes + '</span>' +
-                        '</div></div></div>';
-                }).join('');
-            } catch (e) {
-                container.innerHTML = '<div class="text-center text-dark-300 text-sm py-4">加载失败</div>';
-            }
-        }
-
-        loadKnowledgeArticles();
+        function goNaming() { window.location.href = 'naming.html'; }
     </script>
 </body>
 </html>

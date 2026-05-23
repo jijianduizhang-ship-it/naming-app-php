@@ -1,0 +1,5 @@
+{
+    "require": {
+        "6tail/lunar-php": "^1.4"
+    }
+}

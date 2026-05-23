@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>瑞名阁 - 关于我们</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50:'#fef7ee', 100:'#fdedd3', 200:'#fad7a5', 300:'#f6ba6d', 400:'#f19333', 500:'#ee7711', 600:'#df5d07', 700:'#b94409', 800:'#93360e', 900:'#782e0e' },
+                        gold: { 50:'#fffbeb', 100:'#fef3c7', 200:'#fde68a', 300:'#fcd34d', 400:'#fbbf24', 500:'#f59e0b', 600:'#d97706', 700:'#b45309', 800:'#92400e', 900:'#78350f' },
+                        dark: { 50:'#f8f6f3', 100:'#efe9e0', 200:'#ddd2c3', 300:'#c7b59e', 400:'#b09478', 500:'#a07d64', 600:'#91705a', 700:'#775c4c', 800:'#634d42', 900:'#534138' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans SC', sans-serif; background: #f5f0eb; max-width: 430px; margin: 0 auto; min-height: 100vh; overflow-x: hidden; }
+        .font-serif-cn { font-family: 'Noto Serif SC', serif; }
+        .card-shadow { box-shadow: 0 2px 16px rgba(139,26,26,0.08); }
+        .about-header {
+            background: linear-gradient(135deg, #8B1A1A 0%, #C41E3A 40%, #D4456A 70%, #E8837C 100%);
+            position: relative; overflow: hidden;
+        }
+        .about-header::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+        }
+        .menu-item {
+            display: flex; align-items: center; padding: 16px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            transition: all 0.2s;
+        }
+        .menu-item:last-child { border-bottom: none; }
+        .tab-bar {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 430px;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.05); z-index: 100;
+        }
+        .tab-item { transition: all 0.2s; }
+        .tab-item.active { color: #C41E3A; }
+        .feature-card {
+            background: white; border-radius: 16px; padding: 16px;
+            box-shadow: 0 2px 16px rgba(139,26,26,0.06);
+        }
+    </style>
+</head>
+<body class="pb-20">
+    <!-- 导航栏 -->
+    <div class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 px-5 py-4 flex items-center justify-between border-b border-dark-100/50">
+        <div class="w-9 h-9 rounded-full bg-dark-50 flex items-center justify-center cursor-pointer" onclick="goPage('/index.html')">
+            <i class="fas fa-chevron-left text-dark-600 text-sm"></i>
+        </div>
+        <h1 class="font-serif-cn text-dark-800 text-base font-bold">关于我们</h1>
+        <div class="w-9 h-9"></div>
+    </div>
+
+    <!-- 头部品牌区 -->
+    <div class="about-header pt-8 pb-16 px-5 relative">
+        <div class="text-center relative z-10">
+            <div class="w-20 h-20 bg-white/15 backdrop-blur rounded-3xl flex items-center justify-center mx-auto mb-4 border border-white/20">
+                <i class="fas fa-yin-yang text-white text-3xl"></i>
+            </div>
+            <h2 class="font-serif-cn text-white text-2xl font-bold mb-2">瑞名阁</h2>
+            <p class="text-white/70 text-sm">传承千年 · 赐名有道</p>
+            <div class="flex items-center justify-center space-x-4 mt-4">
+                <span class="bg-white/10 backdrop-blur text-white/80 text-xs px-3 py-1 rounded-full">v2.1.0</span>
+                <span class="bg-white/10 backdrop-blur text-white/80 text-xs px-3 py-1 rounded-full">已认证</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 简介 -->
+    <div class="px-5 -mt-8 relative z-10 mb-5">
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <h3 class="font-serif-cn text-dark-800 text-sm font-bold mb-3">应用简介</h3>
+            <p class="text-dark-500 text-xs leading-relaxed">
+                瑞名阁是一款专业的生辰八字起名工具，融合传统命理学与现代美学，为新生儿提供科学、吉祥、富有文化内涵的名字推荐。我们的算法基于千年传承的八字命理体系，结合大数据分析，确保每个推荐的名字都经过严格的五行、三才、笔画吉凶等多重验证。
+            </p>
+        </div>
+    </div>
+
+    <!-- 核心特色 -->
+    <div class="px-5 mb-5">
+        <h3 class="font-serif-cn text-dark-800 text-sm font-bold mb-3">核心特色</h3>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="feature-card">
+                <div class="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-3">
+                    <i class="fas fa-yin-yang text-primary-500 text-lg"></i>
+                </div>
+                <h4 class="text-dark-800 text-sm font-bold mb-1">八字分析</h4>
+                <p class="text-dark-400 text-xs">精准计算生辰八字，分析命局五行强弱</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center mb-3">
+                    <i class="fas fa-fire text-gold-500 text-lg"></i>
+                </div>
+                <h4 class="text-dark-800 text-sm font-bold mb-1">五行平衡</h4>
+                <p class="text-dark-400 text-xs">根据喜用神补益，达到五行和谐</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center mb-3">
+                    <i class="fas fa-pen-nib text-purple-500 text-lg"></i>
+                </div>
+                <h4 class="text-dark-800 text-sm font-bold mb-1">笔画吉凶</h4>
+                <p class="text-dark-400 text-xs">严格遵循康熙字典笔画，三才五格俱全</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center mb-3">
+                    <i class="fas fa-book-open text-emerald-500 text-lg"></i>
+                </div>
+                <h4 class="text-dark-800 text-sm font-bold mb-1">诗词典故</h4>
+                <p class="text-dark-400 text-xs">名字均有出处，传承中华文化精髓</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使用指南 -->
+    <div class="px-5 mb-5">
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <h3 class="font-serif-cn text-dark-800 text-sm font-bold mb-4 flex items-center">
+                <i class="fas fa-book text-primary-400 mr-2"></i>使用指南
+            </h3>
+            <div class="space-y-4">
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-primary-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+                    <div>
+                        <p class="text-dark-700 text-sm font-medium">输入宝宝信息</p>
+                        <p class="text-dark-400 text-xs mt-0.5">填写姓氏、性别、出生日期和时间</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-primary-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+                    <div>
+                        <p class="text-dark-700 text-sm font-medium">智能分析</p>
+                        <p class="text-dark-400 text-xs mt-0.5">系统自动计算八字、五行、喜用神</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-primary-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+                    <div>
+                        <p class="text-dark-700 text-sm font-medium">获取推荐</p>
+                        <p class="text-dark-400 text-xs mt-0.5">查看多组精选名字及详细解析</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <div class="w-6 h-6 bg-primary-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
+                    <div>
+                        <p class="text-dark-700 text-sm font-medium">收藏分享</p>
+                        <p class="text-dark-400 text-xs mt-0.5">保存喜欢的名字，与家人分享</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 联系我们 -->
+    <div class="px-5 mb-5">
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <h3 class="font-serif-cn text-dark-800 text-sm font-bold mb-4">联系我们</h3>
+            <div class="space-y-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-envelope text-blue-500 text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-dark-400 text-xs">客服邮箱</p>
+                        <p class="text-dark-700 text-sm">support@ruimingge.com</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 bg-green-50 rounded-xl flex items-center justify-center">
+                        <i class="fab fa-weixin text-green-500 text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-dark-400 text-xs">微信公众号</p>
+                        <p class="text-dark-700 text-sm">瑞名阁起名</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-phone text-primary-500 text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-dark-400 text-xs">客服热线</p>
+                        <p class="text-dark-700 text-sm">400-888-8888</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 法律信息 -->
+    <div class="px-5 mb-8">
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <div class="menu-item">
+                <div class="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center mr-3">
+                    <i class="fas fa-file-contract text-blue-500 text-sm"></i>
+                </div>
+                <span class="flex-1 text-dark-700 text-sm">用户协议</span>
+                <i class="fas fa-chevron-right text-dark-300 text-xs"></i>
+            </div>
+            <div class="menu-item">
+                <div class="w-9 h-9 bg-purple-50 rounded-xl flex items-center justify-center mr-3">
+                    <i class="fas fa-shield-halved text-purple-500 text-sm"></i>
+                </div>
+                <span class="flex-1 text-dark-700 text-sm">隐私政策</span>
+                <i class="fas fa-chevron-right text-dark-300 text-xs"></i>
+            </div>
+            <div class="menu-item">
+                <div class="w-9 h-9 bg-orange-50 rounded-xl flex items-center justify-center mr-3">
+                    <i class="fas fa-scale-balanced text-orange-500 text-sm"></i>
+                </div>
+                <span class="flex-1 text-dark-700 text-sm">免责声明</span>
+                <i class="fas fa-chevron-right text-dark-300 text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 版权信息 -->
+    <div class="text-center pb-8">
+        <p class="text-dark-300 text-xs">© 2024 瑞名阁 版权所有</p>
+        <p class="text-dark-200 text-xs mt-1">传承中华文化 · 赐名有道</p>
+    </div>
+
+    <script>
+        function goPage(url) { window.location.href = url; }
+    </script>
+
+    <!-- 底部Tab栏 -->
+        <div class="flex items-center justify-around py-2 pb-5">
+            <div class="tab-item text-dark-400 flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/index.html')">
+                <i class="fas fa-home text-lg"></i><span class="text-xs">首页</span>
+            </div>
+            <div class="tab-item text-dark-400 flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/pages/naming.html')">
+                <i class="fas fa-scroll text-lg"></i><span class="text-xs">起名</span>
+            </div>
+            <div class="tab-item text-dark-400 flex flex-col items-center space-y-0.5 relative cursor-pointer" onclick="goPage('/pages/naming.html')">
+                <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-400 rounded-full flex items-center justify-center -mt-5 shadow-lg shadow-primary-500/30">
+                    <i class="fas fa-plus text-white text-lg"></i>
+                </div>
+                <span class="text-xs -mt-0.5">快速起名</span>
+            </div>
+            <div class="tab-item text-dark-400 flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/pages/history.html')">
+                <i class="fas fa-clock-rotate-left text-lg"></i><span class="text-xs">记录</span>
+            </div>
+            <div class="tab-item text-dark-400 flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/pages/profile.html')">
+                <i class="fas fa-user text-lg"></i><span class="text-xs">我的</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>瑞名阁 - 历史记录</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50:'#fef7ee', 100:'#fdedd3', 200:'#fad7a5', 300:'#f6ba6d', 400:'#f19333', 500:'#ee7711', 600:'#df5d07', 700:'#b94409', 800:'#93360e', 900:'#782e0e' },
+                        gold: { 50:'#fffbeb', 100:'#fef3c7', 200:'#fde68a', 300:'#fcd34d', 400:'#fbbf24', 500:'#f59e0b', 600:'#d97706', 700:'#b45309', 800:'#92400e', 900:'#78350f' },
+                        dark: { 50:'#f8f6f3', 100:'#efe9e0', 200:'#ddd2c3', 300:'#c7b59e', 400:'#b09478', 500:'#a07d64', 600:'#91705a', 700:'#775c4c', 800:'#634d42', 900:'#534138' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans SC', sans-serif; background: #f5f0eb; max-width: 430px; margin: 0 auto; min-height: 100vh; overflow-x: hidden; }
+        .font-serif-cn { font-family: 'Noto Serif SC', serif; }
+        .card-shadow { box-shadow: 0 2px 16px rgba(139,26,26,0.08); }
+        .tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.05); z-index: 100; }
+        .tab-item { transition: all 0.2s; cursor: pointer; }
+        .tab-item.active { color: #C41E3A; }
+        .filter-chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; border: 1px solid #efe9e0; background: white; color: #634d42; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .filter-chip.active { background: linear-gradient(135deg, #C41E3A, #E8837C); color: white; border-color: transparent; }
+        .record-card { background: white; border-radius: 16px; padding: 16px; transition: all 0.2s; cursor: pointer; }
+        .record-card:active { transform: scale(0.98); }
+        .tag-mini { padding: 2px 8px; border-radius: 8px; font-size: 10px; }
+    </style>
+</head>
+<body class="pb-20">
+    <!-- 导航栏 -->
+    <div class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 px-5 py-4 flex items-center justify-between border-b border-dark-100/50">
+        <h1 class="font-serif-cn text-dark-800 text-base font-bold">起名记录</h1>
+        <div class="w-9 h-9 rounded-full bg-dark-50 flex items-center justify-center">
+            <i class="fas fa-search text-dark-500 text-sm"></i>
+        </div>
+    </div>
+
+    <!-- 筛选标签 -->
+    <div class="px-5 py-3 flex space-x-2 overflow-x-auto" style="scrollbar-width:none;">
+        <span class="filter-chip active" data-filter="all" onclick="setFilter('all')">全部</span>
+        <span class="filter-chip" data-filter="boy" onclick="setFilter('boy')">男宝宝</span>
+        <span class="filter-chip" data-filter="girl" onclick="setFilter('girl')">女宝宝</span>
+        <span class="filter-chip" data-filter="fav" onclick="setFilter('fav')">已收藏</span>
+    </div>
+
+    <!-- 统计概览 -->
+    <div class="px-5 mb-4" id="statsPanel">
+        <div class="bg-gradient-to-r from-primary-50 to-pink-50 rounded-2xl p-4 flex items-center justify-between">
+            <div class="text-center flex-1">
+                <p class="font-serif-cn text-primary-600 text-2xl font-bold" id="statCount">0</p>
+                <p class="text-dark-400 text-xs mt-0.5">起名次数</p>
+            </div>
+            <div class="w-px h-10 bg-dark-200"></div>
+            <div class="text-center flex-1">
+                <p class="font-serif-cn text-primary-600 text-2xl font-bold" id="statNames">0</p>
+                <p class="text-dark-400 text-xs mt-0.5">生成名字</p>
+            </div>
+            <div class="w-px h-10 bg-dark-200"></div>
+            <div class="text-center flex-1">
+                <p class="font-serif-cn text-primary-600 text-2xl font-bold" id="statFavs">0</p>
+                <p class="text-dark-400 text-xs mt-0.5">已收藏</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 记录列表 -->
+    <div class="px-5 space-y-3" id="recordList">
+        <!-- 动态渲染 -->
+    </div>
+
+    <!-- 底部Tab栏 -->
+    <div class="tab-bar">
+        <div class="flex items-center justify-around py-2 pb-5">
+            <div class="tab-item flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/index.html')">
+                <i class="fas fa-home text-lg"></i><span class="text-xs">首页</span>
+                <div class="tab-dot w-1 h-1 bg-primary-500 rounded-full"></div>
+            </div>
+            <div class="tab-item flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/pages/naming.html')">
+                <i class="fas fa-scroll text-lg"></i><span class="text-xs">起名</span>
+                <div class="tab-dot w-1 h-1 bg-primary-500 rounded-full"></div>
+            </div>
+            <div class="tab-item flex flex-col items-center space-y-0.5 relative cursor-pointer" onclick="goPage('/pages/naming.html')">
+                <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-400 rounded-full flex items-center justify-center -mt-5 shadow-lg shadow-primary-500/30">
+                    <i class="fas fa-plus text-white text-lg"></i>
+                </div>
+                <span class="text-xs -mt-0.5">快速起名</span>
+            </div>
+            <div class="tab-item active flex flex-col items-center space-y-0.5 cursor-pointer">
+                <i class="fas fa-clock-rotate-left text-lg"></i><span class="text-xs">记录</span>
+                <div class="tab-dot w-1 h-1 bg-primary-500 rounded-full" style="opacity:1;transform:scale(1)"></div>
+            </div>
+            <div class="tab-item flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/pages/profile.html')">
+                <i class="fas fa-user text-lg"></i><span class="text-xs">我的</span>
+                <div class="tab-dot w-1 h-1 bg-primary-500 rounded-full"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goPage(url) { window.location.href = url; }
+
+        let currentFilter = 'all';
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.filter === filter));
+            render();
+        }
+
+        function getRecords() {
+            return JSON.parse(localStorage.getItem('name_records') || '[]');
+        }
+
+        function getFiltered() {
+            const records = getRecords();
+            if (currentFilter === 'all') return records;
+            if (currentFilter === 'boy') return records.filter(r => r.gender === 'boy');
+            if (currentFilter === 'girl') return records.filter(r => r.gender === 'girl');
+            if (currentFilter === 'fav') return records.filter(r => r.names && r.names.some(n => n.fav));
+            return records;
+        }
+
+        function updateStats() {
+            const records = getRecords();
+            const allNames = records.flatMap(r => r.names || []);
+            const favs = allNames.filter(n => n.fav).length;
+            document.getElementById('statCount').textContent = records.length;
+            document.getElementById('statNames').textContent = allNames.length;
+            document.getElementById('statFavs').textContent = favs;
+        }
+
+        function formatDate(iso) {
+            const d = new Date(iso);
+            return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        function render() {
+            const records = getFiltered();
+            const list = document.getElementById('recordList');
+
+            if (records.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-5xl mb-4">📋</div>
+                        <p class="text-dark-400 text-sm">暂无记录</p>
+                        <button class="mt-4 text-primary-500 text-sm font-medium" onclick="goPage('/pages/naming.html')">去起名 →</button>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = records.map((r, idx) => {
+                const genderIcon = r.gender === 'boy' ? 'fa-mars text-blue-400' : 'fa-venus text-pink-400';
+                const genderText = r.gender === 'boy' ? '男宝宝' : '女宝宝';
+                const favCount = (r.names || []).filter(n => n.fav).length;
+                return `
+                <div class="record-card card-shadow" onclick="viewRecord(${idx})">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center">
+                                <i class="fas ${genderIcon} text-xs"></i>
+                            </div>
+                            <div>
+                                <p class="text-dark-800 text-sm font-medium">${r.surname}姓 · ${genderText}</p>
+                                <p class="text-dark-300 text-xs">${r.birthday} ${r.birthtime}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-primary-500 text-xs font-medium">${(r.names || []).length}个名字</p>
+                            ${favCount > 0 ? '<p class="text-dark-300 text-xs"><i class="fas fa-heart text-primary-400 text-xs mr-1"></i>' + favCount + '</p>' : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-1 flex-wrap">
+                            ${(r.names || []).slice(0,3).map(n => `<span class="tag-mini bg-dark-50 text-dark-500">${r.surname}${n.name}</span>`).join('')}
+                            ${(r.names || []).length > 3 ? '<span class="tag-mini bg-dark-50 text-dark-400">+' + (r.names.length - 3) + '</span>' : ''}
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-dark-300 text-xs">${formatDate(r.createdAt)}</span>
+                            <i class="fas fa-chevron-right text-dark-300 text-xs"></i>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function viewRecord(idx) {
+            // 把这条记录设为当前记录，然后跳转
+            const records = getRecords();
+            sessionStorage.setItem('current_record_idx', idx);
+            window.location.href = 'result.html';
+        }
+
+        updateStats();
+        render();
+    </script>
+</body>
+</html>

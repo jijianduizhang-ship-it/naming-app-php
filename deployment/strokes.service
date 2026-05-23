@@ -1,0 +1,14 @@
+[Unit]
+Description=Name.imoons.cn Stroke Calculation Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/www/wwwroot/name.imoons.cn
+ExecStart=/usr/bin/node /www/wwwroot/name.imoons.cn/strokes_server.js
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>瑞名阁 - 起名结果</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50:'#fef7ee', 100:'#fdedd3', 200:'#fad7a5', 300:'#f6ba6d', 400:'#f19333', 500:'#ee7711', 600:'#df5d07', 700:'#b94409', 800:'#93360e', 900:'#782e0e' },
+                        gold: { 50:'#fffbeb', 100:'#fef3c7', 200:'#fde68a', 300:'#fcd34d', 400:'#fbbf24', 500:'#f59e0b', 600:'#d97706', 700:'#b45309', 800:'#92400e', 900:'#78350f' },
+                        dark: { 50:'#f8f6f3', 100:'#efe9e0', 200:'#ddd2c3', 300:'#c7b59e', 400:'#b09478', 500:'#a07d64', 600:'#91705a', 700:'#775c4c', 800:'#634d42', 900:'#534138' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans SC', sans-serif; background: #f5f0eb; max-width: 430px; margin: 0 auto; min-height: 100vh; overflow-x: hidden; }
+        .font-serif-cn { font-family: 'Noto Serif SC', serif; }
+        .card-shadow { box-shadow: 0 2px 16px rgba(139,26,26,0.08); }
+        .bazi-card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); position: relative; overflow: hidden; }
+        .bazi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .wuxing-bar { height: 6px; border-radius: 3px; transition: width 0.8s ease; }
+        .name-card { background: white; border-radius: 20px; overflow: hidden; transition: all 0.3s; box-shadow: 0 2px 16px rgba(139,26,26,0.06); cursor: pointer; }
+        .name-card:active { transform: scale(0.98); }
+        .tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.05); z-index: 100; }
+        .tab-item { transition: all 0.2s; cursor: pointer; }
+        .tab-item.active { color: #C41E3A; }
+        .score-ring { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
+        .score-ring::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 3px solid #efe9e0; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: rgba(0,0,0,0.8); color: white; padding: 14px 28px; border-radius: 12px; font-size: 14px; z-index: 9999; transition: transform 0.3s; pointer-events: none; }
+        .toast.show { transform: translate(-50%, -50%) scale(1); }
+        .fav-icon { transition: all 0.3s; }
+        .fav-icon.active { color: #C41E3A; }
+        .analysis-text { font-size: 13px; line-height: 1.8; color: rgba(255,255,255,0.75); }
+        .ai-badge { background: linear-gradient(135deg, #C41E3A, #E8837C); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .no-bazi-card { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 20px; padding: 20px; }
+    </style>
+</head>
+<body class="pb-20">
+    <!-- 导航栏 -->
+    <div class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 px-5 py-4 flex items-center justify-between border-b border-dark-100/50">
+        <div class="w-9 h-9 rounded-full bg-dark-50 flex items-center justify-center cursor-pointer" onclick="goPage('/pages/naming.html')">
+            <i class="fas fa-chevron-left text-dark-600 text-sm"></i>
+        </div>
+        <h1 class="font-serif-cn text-dark-800 text-base font-bold">起名结果</h1>
+        <div class="w-9 h-9 rounded-full bg-dark-50 flex items-center justify-center cursor-pointer" onclick="sharePage()">
+            <i class="fas fa-share-nodes text-dark-400 text-sm"></i>
+        </div>
+    </div>
+
+    <!-- 主内容 -->
+    <div id="mainContent">
+        <div class="empty-state" style="padding:60px 20px;text-align:center">
+            <div style="font-size:64px;margin-bottom:16px">🔍</div>
+            <h3 class="font-serif-cn text-dark-800 text-lg font-bold mb-2">加载中...</h3>
+        </div>
+    </div>
+
+    <!-- 底部Tab栏 -->
+    <div class="tab-bar">
+        <div class="flex items-center justify-around py-2 pb-5">
+            <div class="tab-item flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/index.html')">
+                <i class="fas fa-home text-lg"></i><span class="text-xs">首页</span>
+            </div>
+            <div class="tab-item active flex flex-col items-center space-y-0.5 cursor-pointer">
+                <i class="fas fa-scroll text-lg"></i><span class="text-xs">起名</span>
+            </div>
+            <div class="tab-item flex flex-col items-center space-y-0.5 relative cursor-pointer" onclick="goPage('/pages/naming.html')">
+                <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-400 rounded-full flex items-center justify-center -mt-5 shadow-lg shadow-primary-500/30">
+                    <i class="fas fa-plus text-white text-lg"></i>
+                </div>
+                <span class="text-xs -mt-0.5">快速起名</span>
+            </div>
+            <div class="tab-item flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/pages/history.html')">
+                <i class="fas fa-clock-rotate-left text-lg"></i><span class="text-xs">记录</span>
+            </div>
+            <div class="tab-item flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/pages/profile.html')">
+                <i class="fas fa-user text-lg"></i><span class="text-xs">我的</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- Lunar Library Loader: injects window.__lunarCalc for zodiac calc -->
+    <script>
+        (function() {
+            window.__lunarReady = false;
+            var script = document.createElement("script");
+            script.type = "module";
+            script.textContent = "import { toLunar } from 'https://esm.sh/lunar@2.0.0/es2022/lunar.mjs'; window.__lunarCalc = toLunar; window.__lunarReady = true;";
+            script.onerror = function() { window.__lunarReady = true; };
+            document.head.appendChild(script);
+            setTimeout(function() { window.__lunarReady = true; }, 3000);
+        })();
+    </script>
+
+    <script>
+        const API_BASE = '/api';
+
+        function goPage(url) { window.location.href = url; }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function sharePage() {
+            if (navigator.share) {
+                navigator.share({ title: '瑞名阁 - 起名结果', text: '我给宝宝起了好名字，快来看看！', url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                showToast('链接已复制');
+            }
+        }
+
+        // 读取最新记录
+        function getLatestRecord() {
+            const records = JSON.parse(localStorage.getItem('name_records') || '[]');
+            return records[0] || null;
+        }
+
+        // 收藏
+        function toggleFav(nameIdx) {
+            const records = JSON.parse(localStorage.getItem('name_records') || '[]');
+            if (!records[0]) return;
+            records[0].names[nameIdx].fav = !records[0].names[nameIdx].fav;
+            localStorage.setItem('name_records', JSON.stringify(records));
+            render();
+        }
+
+        // 五行颜色映射
+        const wuxingColors = {
+            '金': { bar: 'from-yellow-300 to-yellow-500', text: 'text-yellow-300', bg: 'bg-yellow-50', badge: 'text-yellow-600', rgb: [251,191,36] },
+            '木': { bar: 'from-green-400 to-green-600', text: 'text-green-400', bg: 'bg-green-50', badge: 'text-green-600', rgb: [34,197,94] },
+            '水': { bar: 'from-blue-400 to-blue-600', text: 'text-blue-400', bg: 'bg-blue-50', badge: 'text-blue-600', rgb: [59,130,246] },
+            '火': { bar: 'from-red-400 to-red-600', text: 'text-red-400', bg: 'bg-red-50', badge: 'text-red-600', rgb: [239,68,68] },
+            '土': { bar: 'from-amber-600 to-amber-800', text: 'text-amber-400', bg: 'bg-amber-50', badge: 'text-amber-600', rgb: [217,119,6] }
+        };
+
+        // 八字天干地支对照
+        const dizhi = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+        const dizhiToZodiac = { '子':'鼠','丑':'牛','寅':'虎','卯':'兔','辰':'龙','巳':'蛇','午':'马','未':'羊','申':'猴','酉':'鸡','戌':'狗','亥':'猪' };
+
+        // 拼音映射（常用字）
+        const pinyinMap = {
+            '泽':'zé','铭':'míng','瑞':'ruì','钧':'jūn','源':'yuán','瑜':'yú','宸':'chén','澄':'chéng','瀚':'hàn','煜':'yù',
+            '锦':'jǐn','霖':'lín','岳':'yuè','桐':'tóng','安':'ān','澜':'lán','皓':'hào','哲':'zhé','峻':'jùn','琪':'qí',
+            '琳':'lín','玥':'yuè','怡':'yí','涵':'hán','萱':'xuān','晴':'qíng','颖':'yǐng','岚':'lán',
+            '诗':'shī','梓':'zǐ','欣':'xīn','雨':'yǔ','梦':'mèng','雅':'yǎ','楠':'nán','思':'sī','宇':'yǔ','博':'bó',
+            '航':'háng','然':'rán','轩':'xuān','远':'yuǎn','一':'yī','诺':'nuò','子':'zǐ','墨':'mò','俊杰':'jùnjié',
+            '昕桐':'xīn tóng','煜城':'yù chéng','烨磊':'yè lěi','廷熠':'tíng yì','宇焓':'yǔ hán',
+            '诗岚':'shī lán','雅琳':'yǎ lín','欣岚':'xīn lán','梦琪':'mèng qí','梓萱':'zǐ xuān',
+        };
+
+        function getPinyin(name) {
+            if (pinyinMap[name]) return pinyinMap[name];
+            let py = '';
+            for (let ch of name) {
+                if (pinyinMap[ch]) py += pinyinMap[ch];
+                else py += ch;
+            }
+            return py;
+        }
+
+        // 从八字年柱获取生肖
+        function getZodiacFromBazi(bazi) {
+            if (bazi && bazi.year && bazi.year.length >= 2) {
+                const yearZhi = bazi.year[1];
+                if (dizhiToZodiac[yearZhi]) return dizhiToZodiac[yearZhi];
+            }
+            return null;
+        }
+
+        // 用lunar库从公历日期获取生肖
+        function getZodiacFromLunar(birthday) {
+            try {
+                if (window.__lunarCalc) {
+                    const parts = birthday.split('-');
+                    if (parts.length === 3) {
+                        const y = parseInt(parts[0]);
+                        const m = parseInt(parts[1]);
+                        const d = parseInt(parts[2]);
+                        const lunar = window.__lunarCalc({year: y, month: m, day: d});
+                        if (lunar && lunar.zodiac) return lunar.zodiac;
+                    }
+                }
+            } catch(e) { /* ignore */ }
+            return null;
+        }
+
+        // 获取生肖（优先级：bazi > lunar库 > 公历硬算）
+        function getZodiac(bazi, birthday) {
+            const fromBazi = getZodiacFromBazi(bazi);
+            if (fromBazi) return fromBazi;
+            const fromLunar = getZodiacFromLunar(birthday);
+            if (fromLunar) return fromLunar;
+            const zodiacs = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+            const year = parseInt(birthday.split('-')[0]);
+            return zodiacs[(year - 4) % 12];
+        }
+
+        // 获取八字柱的五行标注
+        function getPillarWuxing(pillar) {
+            if (!pillar || pillar.length < 2) return '';
+            const wuxingOfZhi = { '子':'水', '丑':'土', '寅':'木', '卯':'木', '辰':'土', '巳':'火', '午':'火', '未':'土', '申':'金', '酉':'金', '戌':'土', '亥':'水' };
+            const wuxingOfGan = { '甲':'木', '乙':'木', '丙':'火', '丁':'火', '戊':'土', '己':'土', '庚':'金', '辛':'金', '壬':'水', '癸':'水' };
+            const gan = pillar[0];
+            const zhi = pillar[1];
+            return (wuxingOfGan[gan] || '') + (wuxingOfZhi[zhi] || '');
+        }
+
+        function wuxingCircle(wx) {
+            const colors = {
+                '金': { bg: 'bg-yellow-100', border: 'border-yellow-400', text: 'text-yellow-700' },
+                '木': { bg: 'bg-green-100', border: 'border-green-400', text: 'text-green-700' },
+                '水': { bg: 'bg-blue-100', border: 'border-blue-400', text: 'text-blue-700' },
+                '火': { bg: 'bg-red-100', border: 'border-red-400', text: 'text-red-700' },
+                '土': { bg: 'bg-amber-100', border: 'border-amber-400', text: 'text-amber-700' }
+            };
+            return colors[wx] || { bg: 'bg-gray-100', border: 'border-gray-400', text: 'text-gray-700' };
+        }
+
+        function render() {
+            const record = getLatestRecord();
+            const main = document.getElementById('mainContent');
+
+            if (!record || !record.names || record.names.length === 0) {
+                main.innerHTML = '<div style="padding:60px 20px;text-align:center"><div style="font-size:64px;margin-bottom:16px">🔍</div><h3 class="font-serif-cn text-dark-800 text-lg font-bold mb-2">暂无起名记录</h3><p class="text-dark-400 text-sm mb-6">请先填写信息生成名字</p><button style="background:linear-gradient(135deg,#C41E3A,#E8837C);color:white;padding:12px 32px;border-radius:12px;font-weight:500" onclick="goPage(\'naming.html\')">前往起名</button></div>';
+                return;
+            }
+
+            const { surname, gender, birthday, birthtime, names, bazi } = record;
+            const genderText = gender === 'boy' ? '男宝宝' : '女宝宝';
+            const zodiac = getZodiac(bazi, birthday);
+
+            // 判断是否有AI分析的八字
+            const hasBazi = bazi && bazi.year;
+
+            // 计算五行分布
+            let wuxingCounts = {金:0,木:0,水:0,火:0,土:0};
+            if (hasBazi && bazi.wuxing) {
+                wuxingCounts = {...bazi.wuxing};
+            } else {
+                names.forEach(n => { if (n.wuxing && wuxingCounts.hasOwnProperty(n.wuxing)) wuxingCounts[n.wuxing]++; });
+            }
+            const total = Object.values(wuxingCounts).reduce((a,b)=>a+b,0)||1;
+
+            // 生成八字卡片
+            let baziHTML = '';
+            if (hasBazi) {
+                const pillars = [
+                    { label: '年柱', value: bazi.year || '', wx: getPillarWuxing(bazi.year) },
+                    { label: '月柱', value: bazi.month || '', wx: getPillarWuxing(bazi.month) },
+                    { label: '日柱', value: bazi.day || '', wx: getPillarWuxing(bazi.day) },
+                    { label: '时柱', value: bazi.hour || '', wx: getPillarWuxing(bazi.hour) }
+                ];
+                const xiyongshen = Array.isArray(bazi.xiyongshen) ? bazi.xiyongshen : (bazi.xiyongshen ? [bazi.xiyongshen] : []);
+                const avoid = Array.isArray(bazi.avoid) ? bazi.avoid : [];
+                const dayMaster = bazi.day_master || '';
+                const strength = bazi.day_master_strength || '';
+
+                baziHTML = `
+                <div class="px-4 pt-4 mb-4">
+                    <div class="bazi-card rounded-2xl p-5 text-white relative z-10">
+                        <div class="flex items-center justify-between mb-4 relative z-10">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="font-serif-cn text-lg font-bold">${surname}姓${genderText}</h3>
+                                    <span class="text-xs px-2 py-0.5 rounded-full" style="background:rgba(255,255,255,0.15)">AI智能分析</span>
+                                </div>
+                                <p class="text-white/60 text-xs mt-0.5">${birthday} ${birthtime} · ${birthday.split('-')[0]}年生 · ${zodiac}年</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#C41E3A,#E8837C)">
+                                <span class="text-white text-lg font-bold">${dayMaster[0] || '?'}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-2 mb-4 relative z-10">
+                            ${pillars.map(p => `
+                            <div class="bg-white/10 backdrop-blur rounded-xl p-2.5 text-center">
+                                <p class="text-white/50 text-xs mb-1">${p.label}</p>
+                                <p class="font-serif-cn text-base font-bold leading-tight">${p.value || '--'}</p>
+                                <p class="text-white/40 text-xs mt-0.5">${p.wx}</p>
+                            </div>`).join('')}
+                        </div>
+
+                        <div class="bg-white/5 rounded-xl p-3 mb-3 relative z-10">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-dragon text-primary-400"></i>
+                                    <div>
+                                        <p class="text-white/50 text-xs">生肖</p>
+                                        <p class="text-white font-serif-cn font-bold">${zodiac}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-white/50 text-xs">日主</p>
+                                    <p class="text-white font-serif-cn font-bold">${dayMaster} · ${strength}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/5 rounded-xl p-3 mb-3 relative z-10">
+                            <p class="text-white/60 text-xs mb-2">五行分布</p>
+                            <div class="space-y-2">
+                                ${Object.entries(wuxingCounts).map(([k,v]) => {
+                                    const pct = Math.round(v/total*100);
+                                    const c = wuxingColors[k] || {};
+                                    return `<div class="flex items-center space-x-2">
+                                        <span class="text-xs text-white/70 w-5 text-center">${k}</span>
+                                        <div class="flex-1 bg-white/10 rounded-full h-1.5"><div class="wuxing-bar bg-gradient-to-r ${c.bar||''}" style="width:${pct}%"></div></div>
+                                        <span class="text-xs text-white/50 w-4 text-center">${v}</span>
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-3 mb-3 relative z-10">
+                            <div class="flex items-center space-x-1.5">
+                                <i class="fas fa-lightbulb text-yellow-300 text-xs"></i>
+                                <span class="text-yellow-300 text-xs font-medium">喜用神：${xiyongshen.join('、') || '待分析'}</span>
+                            </div>
+                            ${avoid.length > 0 ? `<div class="flex items-center space-x-1.5">
+                                <i class="fas fa-ban text-white/30 text-xs"></i>
+                                <span class="text-white/40 text-xs">忌：${avoid.join('、')}</span>
+                            </div>` : ''}
+                        </div>
+
+                        ${bazi.analysis ? `
+                        <div class="bg-white/5 rounded-xl p-3 relative z-10">
+                            <p class="text-white/50 text-xs mb-1.5">命理分析</p>
+                            <p class="analysis-text">${bazi.analysis}</p>
+                        </div>` : ''}
+                    </div>
+                </div>`;
+            } else {
+                const xiYong = Object.entries(wuxingCounts).sort((a,b)=>b[1]-a[1])[0];
+                baziHTML = `
+                <div class="px-4 pt-4 mb-4">
+                    <div class="no-bazi-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="font-serif-cn text-lg font-bold text-white">${surname}姓${genderText}</h3>
+                                <p class="text-white/60 text-xs mt-0.5">${birthday} ${birthtime} · ${birthday.split('-')[0]}年生 · ${zodiac}年</p>
+                            </div>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-3">
+                            <p class="text-white/60 text-xs mb-2">五行分布（参考）</p>
+                            <div class="space-y-2">
+                                ${Object.entries(wuxingCounts).map(([k,v]) => {
+                                    const pct = Math.round(v/total*100);
+                                    const c = wuxingColors[k] || {};
+                                    return `<div class="flex items-center space-x-2">
+                                        <span class="text-xs text-white/70 w-5">${k}</span>
+                                        <div class="flex-1 bg-white/10 rounded-full h-1.5"><div class="wuxing-bar bg-gradient-to-r ${c.bar||''}" style="width:${pct}%"></div></div>
+                                        <span class="text-xs text-white/50 w-4">${v}</span>
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // 名字卡片列表
+            const namesHTML = names.map((n, i) => {
+                const wc = wuxingColors[n.wuxing] || {};
+                const pinyin = n.pinyin || getPinyin(n.name);
+                const suitableReason = n.suitable_reason || n.meaning || '';
+
+                return `<div class="name-card p-4 mb-3" onclick="goDetail(${i})">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="score-ring" style="background:${i===0?'linear-gradient(135deg,#fef2f2,#fee2e2)':i===1?'linear-gradient(135deg,#fffbeb,#fef3c7)':'linear-gradient(135deg,#f5f0eb,#efe9e0)'}">
+                                <div class="text-center">
+                                    <p class="font-serif-cn ${i===0?'text-primary-600':i===1?'text-gold-600':'text-dark-400'} text-lg font-bold leading-none">${n.score||'--'}</p>
+                                    <p class="text-dark-300 text-xs">分</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-serif-cn text-dark-800 text-2xl font-bold tracking-wider">${surname}${n.name}</h3>
+                                <p class="text-dark-400 text-xs mt-0.5">${pinyin}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end space-y-1">
+                            ${i===0?'<span class="bg-gradient-to-r from-primary-500 to-primary-400 text-white text-xs px-2 py-0.5 rounded-full">最佳推荐</span>':''}
+                            <button class="fav-icon ${n.fav?'active':''}" onclick="event.stopPropagation();toggleFav(${i})">
+                                <i class="${n.fav?'fas':'far'} fa-heart text-lg ${n.fav?'text-primary-500':'text-dark-300'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center space-x-2 flex-wrap">
+                        ${n.wuxing?`<span class="px-2 py-1 ${wc.bg||'bg-gray-50'} ${wc.badge||'text-gray-600'} rounded-lg text-xs"><i class="fas fa-yin-yang mr-1"></i>五行·${n.wuxing}</span>`:''}
+                        ${n.source?`<span class="px-2 py-1 bg-amber-50 text-amber-600 rounded-lg text-xs"><i class="fas fa-book mr-1"></i>${n.source}</span>`:''}
+                    </div>
+                    ${n.meaning?`<div class="mt-3 bg-dark-50/50 rounded-xl p-3">
+                        <p class="text-dark-500 text-xs leading-relaxed"><span class="text-dark-700 font-medium">寓意：</span>${n.meaning}</p>
+                    </div>`:''}
+                    ${suitableReason?`<div class="mt-2 bg-primary-50/50 rounded-xl p-3">
+                        <p class="text-primary-600/80 text-xs leading-relaxed"><i class="fas fa-check-circle mr-1"></i><span class="font-medium">为何适合：</span>${suitableReason}</p>
+                    </div>`:''}
+                    <div class="mt-3 flex items-center justify-end">
+                        <span class="text-primary-500 text-xs font-medium">查看详情 <i class="fas fa-chevron-right text-xs"></i></span>
+                    </div>
+                </div>`;
+            }).join('');
+
+            main.innerHTML = `
+                ${baziHTML}
+                <div class="px-4 flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <h2 class="font-serif-cn text-dark-800 text-base font-bold">精选好名</h2>
+                        ${hasBazi ? '<span class="ai-badge text-xs font-medium">AI命理推荐</span>' : ''}
+                        <span class="bg-primary-50 text-primary-500 text-xs px-2 py-0.5 rounded-full">${names.length}个</span>
+                    </div>
+                    <button class="text-primary-500 text-xs cursor-pointer" onclick="goPage('/pages/naming.html')">
+                        <i class="fas fa-rotate mr-1"></i>重新生成
+                    </button>
+                </div>
+                <div class="px-4 mb-6">${namesHTML}</div>
+                <div class="px-4 pb-24">
+                    <div class="bg-white rounded-2xl p-4 flex items-center justify-between" style="box-shadow:0 2px 16px rgba(139,26,26,0.08)">
+                        <button class="w-10 h-10 bg-dark-50 rounded-xl flex items-center justify-center cursor-pointer" onclick="goPage('/pages/naming.html')">
+                            <i class="fas fa-rotate-left text-dark-500"></i>
+                        </button>
+                        <button class="bg-gradient-to-r from-primary-500 to-primary-400 text-white text-sm px-6 py-2.5 rounded-xl flex items-center space-x-1 cursor-pointer" onclick="goPage('/pages/naming.html')">
+                            <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                            <span>重新生成</span>
+                        </button>
+                    </div>
+                </div>`;
+        }
+
+        function goDetail(idx) {
+            sessionStorage.setItem('current_name_idx', idx);
+            window.location.href = 'name-detail.html';
+        }
+
+        render();
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>起名知识 - 瑞名阁</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50:'#fef7ee', 100:'#fdedd3', 200:'#fad7a5', 300:'#f6ba6d', 400:'#f19333', 500:'#ee7711', 600:'#df5d07', 700:'#b94409', 800:'#93360e', 900:'#782e0e' },
+                        gold: { 50:'#fffbeb', 100:'#fef3c7', 200:'#fde68a', 300:'#fcd34d', 400:'#fbbf24', 500:'#f59e0b', 600:'#d97706', 700:'#b45309', 800:'#92400e', 900:'#78350f' },
+                        dark: { 50:'#f8f6f3', 100:'#efe9e0', 200:'#ddd2c3', 300:'#c7b59e', 400:'#b09478', 500:'#a07d64', 600:'#91705a', 700:'#775c4c', 800:'#634d42', 900:'#534138' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans SC', sans-serif; background: #f5f0eb; max-width: 430px; margin: 0 auto; min-height: 100vh; }
+        .font-serif-cn { font-family: 'Noto Serif SC', serif; }
+        .gradient-header {
+            background: linear-gradient(135deg, #8B1A1A 0%, #C41E3A 40%, #D4456A 70%, #E8837C 100%);
+        }
+        .article-content p { margin-bottom: 1em; line-height: 1.8; }
+        .article-content strong { color: #C41E3A; }
+        .article-content h2, .article-content h3 { font-family: 'Noto Serif SC', serif; margin: 1.2em 0 0.6em; }
+        .article-content ul, .article-content ol { padding-left: 1.5em; margin-bottom: 1em; }
+        .article-content li { line-height: 1.8; margin-bottom: 0.3em; }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="gradient-header pt-12 pb-6 px-5">
+        <div class="flex items-center justify-between relative z-10">
+            <button class="w-9 h-9 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center" onclick="history.back()">
+                <i class="fas fa-chevron-left text-white"></i>
+            </button>
+            <span class="font-serif-cn text-white text-lg font-bold">起名知识</span>
+            <div class="w-9 h-9"></div>
+        </div>
+    </div>
+
+    <!-- 文章内容 -->
+    <div id="articleContent" class="px-5 py-6">
+        <div class="text-center py-20 text-dark-300">
+            <i class="fas fa-spinner fa-spin text-2xl mb-3"></i>
+            <p>加载中...</p>
+        </div>
+    </div>
+
+    <!-- 底部返回 -->
+    <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white/95 backdrop-blur border-t border-warm-200 px-5 py-4 z-50">
+        <button class="btn-primary w-full py-3 rounded-xl text-white font-medium text-sm" onclick="window.location.href='/pages/naming.html'">
+            <i class="fas fa-star mr-1"></i>开始为宝宝起名
+        </button>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        function getQueryParam(key) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(key);
+        }
+
+        async function loadArticle() {
+            const id = getQueryParam('id');
+            const container = document.getElementById('articleContent');
+
+            if (!id) {
+                container.innerHTML = '<div class="text-center py-20 text-dark-300"><p>文章不存在</p></div>';
+                return;
+            }
+
+            try {
+                const res = await fetch(API_BASE + '/article/' + id);
+                const data = await res.json();
+
+                if (!data.id) {
+                    container.innerHTML = '<div class="text-center py-20 text-dark-300"><p>文章不存在或已被删除</p></div>';
+                    return;
+                }
+
+                document.title = data.title + ' - 瑞名阁';
+
+                const img = data.cover_image
+                    ? `<img src="${data.cover_image}" class="w-full h-52 object-cover rounded-2xl mb-5" alt="${data.title}">`
+                    : '';
+                const date = data.created_at ? data.created_at.slice(0, 10) : '';
+                const views = data.views || 0;
+                const likes = data.likes || 0;
+
+                container.innerHTML = `
+                    ${img}
+                    <h1 class="font-serif-cn text-2xl font-bold text-dark-900 leading-relaxed mb-4">${data.title}</h1>
+                    <div class="flex items-center space-x-4 text-dark-300 text-xs mb-6 pb-5 border-b border-warm-200">
+                        <span><i class="far fa-calendar mr-1"></i>${date}</span>
+                        <span><i class="far fa-eye mr-1"></i>${views}</span>
+                        <span><i class="far fa-heart mr-1"></i>${likes}</span>
+                        <span class="tag tag-gold ml-auto">起名知识</span>
+                    </div>
+                    <div class="article-content text-dark-700 text-sm leading-relaxed mb-24">
+                        ${data.content || '<p>暂无正文内容</p>'}
+                    </div>
+                `;
+            } catch (e) {
+                container.innerHTML = '<div class="text-center py-20 text-dark-300"><p>加载失败</p></div>';
+            }
+        }
+
+        loadArticle();
+    </script>
+    <style>
+        .gradient-header { background: linear-gradient(135deg, #8B1A1A 0%, #C41E3A 40%, #D4456A 70%, #E8837C 100%); }
+        .btn-primary {
+            background: linear-gradient(135deg, #C41E3A, #E8837C);
+            box-shadow: 0 4px 20px rgba(196,30,58,0.3);
+        }
+        .tag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+        .tag-gold { background: #fff8e1; color: #B8860B; }
+    </style>
+</body>
+</html>

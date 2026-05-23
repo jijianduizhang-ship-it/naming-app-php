@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>瑞名阁 - 起名输入</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50:'#fef7ee', 100:'#fdedd3', 200:'#fad7a5', 300:'#f6ba6d', 400:'#f19333', 500:'#ee7711', 600:'#df5d07', 700:'#b94409', 800:'#93360e', 900:'#782e0e' },
+                        gold: { 50:'#fffbeb', 100:'#fef3c7', 200:'#fde68a', 300:'#fcd34d', 400:'#fbbf24', 500:'#f59e0b', 600:'#d97706', 700:'#b45309', 800:'#92400e', 900:'#78350f' },
+                        dark: { 50:'#f8f6f3', 100:'#efe9e0', 200:'#ddd2c3', 300:'#c7b59e', 400:'#b09478', 500:'#a07d64', 600:'#91705a', 700:'#775c4c', 800:'#634d42', 900:'#534138' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans SC', sans-serif; background: #f5f0eb; max-width: 430px; margin: 0 auto; min-height: 100vh; overflow-x: hidden; }
+        .font-serif-cn { font-family: 'Noto Serif SC', serif; }
+        .card-shadow { box-shadow: 0 2px 16px rgba(139,26,26,0.08); }
+        .btn-primary {
+            background: linear-gradient(135deg, #C41E3A, #E8837C);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(196,30,58,0.3);
+        }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .input-field {
+            background: #faf8f5;
+            border: 1.5px solid #efe9e0;
+            border-radius: 14px;
+            padding: 14px 16px;
+            font-size: 15px;
+            width: 100%;
+            transition: all 0.3s;
+            outline: none;
+            color: #534138;
+        }
+        .input-field:focus {
+            border-color: #C41E3A;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(196,30,58,0.08);
+        }
+        .input-field::placeholder { color: #c7b59e; }
+        select.input-field { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c7b59e' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+        .gender-btn {
+            flex: 1; padding: 14px; border-radius: 14px;
+            border: 1.5px solid #efe9e0; background: #faf8f5;
+            text-align: center; cursor: pointer; transition: all 0.3s;
+        }
+        .gender-btn.active {
+            border-color: #C41E3A;
+            background: linear-gradient(135deg, rgba(196,30,58,0.05), rgba(232,131,124,0.05));
+        }
+        .gender-btn.active .gender-icon { color: #C41E3A; }
+        .gender-btn.active .gender-text { color: #C41E3A; font-weight: 600; }
+        .name-length-btn {
+            flex: 1; padding: 14px; border-radius: 14px;
+            border: 1.5px solid #efe9e0; background: #faf8f5;
+            text-align: center; cursor: pointer; transition: all 0.3s;
+        }
+        .name-length-btn.active {
+            border-color: #C41E3A;
+            background: linear-gradient(135deg, rgba(196,30,58,0.05), rgba(232,131,124,0.05));
+        }
+        .name-length-btn.active p:first-child { color: #C41E3A; }
+        .tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.05); z-index: 100; }
+        .tab-item { transition: all 0.2s; cursor: pointer; }
+        .tab-item.active { color: #C41E3A; }
+        .tab-item.active .tab-dot { opacity: 1; transform: scale(1); }
+        .tab-dot { opacity: 0; transform: scale(0); transition: all 0.3s; }
+        .tag-chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; border: 1px solid #efe9e0; background: white; color: #634d42; cursor: pointer; transition: all 0.2s; user-select: none; }
+        .tag-chip.selected { background: linear-gradient(135deg, #C41E3A, #E8837C); color: white; border-color: transparent; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: rgba(0,0,0,0.8); color: white; padding: 16px 32px; border-radius: 12px; font-size: 14px; z-index: 9999; transition: transform 0.3s; pointer-events: none; }
+        .toast.show { transform: translate(-50%, -50%) scale(1); }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(245,240,235,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9998; }
+        .loading-overlay.show { display: flex; }
+        .spinner { width: 40px; height: 40px; border: 3px solid #f0ebe5; border-top-color: #C41E3A; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="pb-20">
+    <!-- 导航栏 -->
+    <div class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 px-5 py-4 flex items-center justify-between border-b border-dark-100/50">
+        <div class="w-9 h-9 rounded-full bg-dark-50 flex items-center justify-center cursor-pointer" onclick="goPage('/index.html')">
+            <i class="fas fa-chevron-left text-dark-600 text-sm"></i>
+        </div>
+        <h1 class="font-serif-cn text-dark-800 text-base font-bold">宝宝起名</h1>
+        <div class="w-9 h-9 rounded-full bg-dark-50 flex items-center justify-center">
+            <i class="fas fa-question-circle text-dark-400 text-sm"></i>
+        </div>
+    </div>
+
+    <!-- 表单内容 -->
+    <div class="px-5 space-y-4 pt-4">
+        <!-- 姓氏 -->
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <div class="flex items-center space-x-2 mb-4">
+                <div class="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-user-pen text-primary-500 text-xs"></i>
+                </div>
+                <span class="text-dark-800 text-sm font-medium">姓氏</span>
+                <span class="text-primary-400 text-xs">*必填</span>
+            </div>
+            <input type="text" id="surname" class="input-field" placeholder="请输入宝宝姓氏" maxlength="2">
+            <p class="text-dark-300 text-xs mt-2"><i class="fas fa-info-circle mr-1"></i>请输入宝宝随父/母的姓氏</p>
+        </div>
+
+        <!-- 性别 -->
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <div class="flex items-center space-x-2 mb-4">
+                <div class="w-7 h-7 bg-pink-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-venus-mars text-pink-500 text-xs"></i>
+                </div>
+                <span class="text-dark-800 text-sm font-medium">性别</span>
+                <span class="text-primary-400 text-xs">*必填</span>
+            </div>
+            <div class="flex space-x-3">
+                <div class="gender-btn active" id="gender-boy" onclick="selectGender('boy')">
+                    <i class="fas fa-mars gender-icon text-2xl text-primary-500 mb-1"></i>
+                    <p class="gender-text text-sm text-primary-500 font-semibold">男宝宝</p>
+                    <p class="text-dark-300 text-xs mt-0.5">阳刚大气</p>
+                </div>
+                <div class="gender-btn" id="gender-girl" onclick="selectGender('girl')">
+                    <i class="fas fa-venus gender-icon text-2xl text-dark-300 mb-1"></i>
+                    <p class="gender-text text-sm text-dark-500">女宝宝</p>
+                    <p class="text-dark-300 text-xs mt-0.5">温婉优雅</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 名字字数 -->
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <div class="flex items-center space-x-2 mb-4">
+                <div class="w-7 h-7 bg-teal-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-text-width text-teal-500 text-xs"></i>
+                </div>
+                <span class="text-dark-800 text-sm font-medium">名字字数</span>
+                <span class="text-primary-400 text-xs">选填</span>
+            </div>
+            <div class="flex space-x-3">
+                <div class="flex-1 name-length-btn active" id="length-2" onclick="selectNameLength(2)">
+                    <p class="text-base font-semibold text-primary-500">2字名</p>
+                    <p class="text-dark-300 text-xs mt-0.5">如：李明</p>
+                </div>
+                <div class="flex-1 name-length-btn" id="length-3" onclick="selectNameLength(3)">
+                    <p class="text-base font-semibold text-dark-400">3字名</p>
+                    <p class="text-dark-300 text-xs mt-0.5">如：李子轩</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 出生日期 -->
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <div class="flex items-center space-x-2 mb-4">
+                <div class="w-7 h-7 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-calendar-days text-blue-500 text-xs"></i>
+                </div>
+                <span class="text-dark-800 text-sm font-medium">出生日期</span>
+                <span class="text-primary-400 text-xs">*必填</span>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="text-dark-400 text-xs mb-1 block">年</label>
+                    <select id="birth-year" class="input-field text-center py-3 text-sm">
+                        <option value="">选年</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-dark-400 text-xs mb-1 block">月</label>
+                    <select id="birth-month" class="input-field text-center py-3 text-sm">
+                        <option value="">选月</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-dark-400 text-xs mb-1 block">日</label>
+                    <select id="birth-day" class="input-field text-center py-3 text-sm">
+                        <option value="">选日</option>
+                    </select>
+                </div>
+            </div>
+            <div id="lunar-info" class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-3 flex items-center space-x-2 mt-3" style="display:none">
+                <i class="fas fa-moon text-gold-500 text-sm"></i>
+                <span id="lunar-text" class="text-dark-600 text-xs"></span>
+                <span id="zodiac-tag" class="text-dark-300 text-xs ml-auto"></span>
+            </div>
+        </div>
+
+        <!-- 出生时辰 -->
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <div class="flex items-center space-x-2 mb-4">
+                <div class="w-7 h-7 bg-purple-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-clock text-purple-500 text-xs"></i>
+                </div>
+                <span class="text-dark-800 text-sm font-medium">出生时辰</span>
+                <span class="text-primary-400 text-xs">*必填</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-dark-400 text-xs mb-1 block">小时</label>
+                    <select id="birth-hour" class="input-field text-center py-3 text-sm">
+                        <option value="">选时</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-dark-400 text-xs mb-1 block">分钟</label>
+                    <select id="birth-minute" class="input-field text-center py-3 text-sm">
+                        <option value="">选分</option>
+                    </select>
+                </div>
+            </div>
+            <div id="shichen-info" class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-3 flex items-center space-x-2 mt-3" style="display:none">
+                <i class="fas fa-sun text-purple-500 text-sm"></i>
+                <span id="shichen-text" class="text-dark-600 text-xs"></span>
+            </div>
+        </div>
+
+        <!-- 起名偏好 -->
+        <div class="bg-white rounded-2xl p-5 card-shadow">
+            <div class="flex items-center space-x-2 mb-4">
+                <div class="w-7 h-7 bg-amber-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-sliders text-gold-500 text-xs"></i>
+                </div>
+                <span class="text-dark-800 text-sm font-medium">起名偏好</span>
+                <span class="text-dark-300 text-xs">选填</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <span class="tag-chip selected" data-tag="诗词典故">诗词典故</span>
+                <span class="tag-chip" data-tag="成语起名">成语起名</span>
+                <span class="tag-chip" data-tag="现代简约">现代简约</span>
+                <span class="tag-chip" data-tag="儒雅古风">儒雅古风</span>
+                <span class="tag-chip" data-tag="霸气响亮">霸气响亮</span>
+                <span class="tag-chip" data-tag="清新文艺">清新文艺</span>
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <button class="btn-primary w-full py-4 rounded-2xl text-white font-medium text-base flex items-center justify-center space-x-2 mb-5" id="submitBtn" onclick="submitForm()">
+            <i class="fas fa-wand-magic-sparkles"></i>
+            <span>开始智能起名</span>
+        </button>
+    </div>
+
+    <!-- 底部Tab栏 -->
+    <div class="tab-bar">
+        <div class="flex items-center justify-around py-2 pb-5">
+            <div class="tab-item flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/index.html')">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-xs">首页</span>
+                <div class="tab-dot w-1 h-1 bg-primary-500 rounded-full"></div>
+            </div>
+            <div class="tab-item active flex flex-col items-center space-y-0.5 cursor-pointer">
+                <i class="fas fa-scroll text-lg"></i>
+                <span class="text-xs">起名</span>
+                <div class="tab-dot w-1 h-1 bg-primary-500 rounded-full" style="opacity:1;transform:scale(1)"></div>
+            </div>
+            <div class="tab-item flex flex-col items-center space-y-0.5 relative cursor-pointer" onclick="goPage('/pages/naming.html')">
+                <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-400 rounded-full flex items-center justify-center -mt-5 shadow-lg shadow-primary-500/30">
+                    <i class="fas fa-plus text-white text-lg"></i>
+                </div>
+                <span class="text-xs -mt-0.5">快速起名</span>
+            </div>
+            <div class="tab-item flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/pages/history.html')">
+                <i class="fas fa-clock-rotate-left text-lg"></i>
+                <span class="text-xs">记录</span>
+                <div class="tab-dot w-1 h-1 bg-primary-500 rounded-full"></div>
+            </div>
+            <div class="tab-item flex flex-col items-center space-y-0.5 cursor-pointer" onclick="goPage('/pages/profile.html')">
+                <i class="fas fa-user text-lg"></i>
+                <span class="text-xs">我的</span>
+                <div class="tab-dot w-1 h-1 bg-primary-500 rounded-full"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner mb-4"></div>
+        <p class="text-dark-600 font-medium">AI 正在为您起名...</p>
+        <p class="text-dark-300 text-xs mt-2">请稍候</p>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        // 状态
+        let selectedGender = 'boy';
+        let selectedNameLength = 2;
+        let credits = parseInt(localStorage.getItem('naming_credits') || '0');
+
+        // 时辰表
+        const shichen = ['子时','丑时','寅时','卯时','辰时','巳时','午时','未时','申时','酉时','戌时','亥时'];
+        const shichenHour = [23,1,3,5,7,9,11,13,15,17,19,21];
+
+        // 生肖
+        const zodiacs = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+
+        function init() {
+            initYearSelect();
+            initMonthSelect();
+            initDaySelect();
+            initHourSelect();
+            initMinuteSelect();
+            initTagChips();
+        }
+
+        function initYearSelect() {
+            const el = document.getElementById('birth-year');
+            for (let y = 2025; y >= 1950; y--) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y + '年';
+                el.appendChild(opt);
+            }
+            el.addEventListener('change', updateLunarInfo);
+        }
+
+        function initMonthSelect() {
+            const el = document.getElementById('birth-month');
+            for (let m = 1; m <= 12; m++) {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m + '月';
+                el.appendChild(opt);
+            }
+            el.addEventListener('change', updateDaySelect);
+        }
+
+        function initDaySelect() {
+            const el = document.getElementById('birth-day');
+            el.innerHTML = '<option value="">选日</option>';
+            el.addEventListener('change', updateLunarInfo);
+        }
+
+        function updateDaySelect() {
+            const year = parseInt(document.getElementById('birth-year').value);
+            const month = parseInt(document.getElementById('birth-month').value);
+            const dayEl = document.getElementById('birth-day');
+            dayEl.innerHTML = '<option value="">选日</option>';
+            if (!year || !month) return;
+            const days = new Date(year, month, 0).getDate();
+            for (let d = 1; d <= days; d++) {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = d + '日';
+                dayEl.appendChild(opt);
+            }
+            updateLunarInfo();
+        }
+
+        function initHourSelect() {
+            const el = document.getElementById('birth-hour');
+            shichen.forEach((name, i) => {
+                const opt = document.createElement('option');
+                opt.value = shichenHour[i];
+                opt.textContent = shichenHour[i] + '时 (' + name + ')';
+                el.appendChild(opt);
+            });
+            el.addEventListener('change', updateShichenInfo);
+        }
+
+        function initMinuteSelect() {
+            const el = document.getElementById('birth-minute');
+            for (let m = 0; m <= 59; m++) {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = (m < 10 ? '0' : '') + m + '分';
+                el.appendChild(opt);
+            }
+        }
+
+        function initTagChips() {
+            document.querySelectorAll('.tag-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chip.classList.toggle('selected');
+                });
+            });
+        }
+
+        // =====================================================
+        // 修复：农历计算 - 使用 lunar@2.0.0 纯JS库（无外部API依赖）
+        // =====================================================
+        let lunarCache = {};
+
+        function __toChineseMonth(month, isLeap) {
+            var c = ['正','二','三','四','五','六','七','八','九','十','冬','腊'];
+            var prefix = isLeap ? '闰' : '';
+            if (month === 1) return prefix + '正月';
+            return prefix + c[month - 1] + '月';
+        }
+
+        function __toChineseDay(day) {
+            var names = ['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+                         '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+                         '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+            return names[day - 1] || day;
+        }
+
+        window.__lunarReady = false;
+        window.__lunarCalc = null;
+
+        (function __loadLunar() {
+            var script = document.createElement('script');
+            script.type = 'module';
+            script.textContent = "import { toLunar, formatLunar, formatLunarParts } from 'https://esm.sh/lunar@2.0.0/es2022/lunar.mjs'; window.__lunarCalc = toLunar; window.__formatLunar = formatLunar; window.__formatLunarParts = formatLunarParts; window.__lunarReady = true; window.dispatchEvent(new CustomEvent('lunar-ready'));";
+            document.head.appendChild(script);
+            setTimeout(function() {
+                if (!window.__lunarReady) {
+                    window.__lunarReady = true;
+                    window.__lunarCalc = null;
+                }
+            }, 10000);
+        })();
+
+        function updateLunarInfo() {
+            var year = parseInt(document.getElementById('birth-year').value);
+            var month = parseInt(document.getElementById('birth-month').value);
+            var day = parseInt(document.getElementById('birth-day').value);
+            if (!year || !month || !day) {
+                document.getElementById('lunar-info').style.display = 'none';
+                return;
+            }
+
+            var dateStr = year + String(month).padStart(2, '0') + String(day).padStart(2, '0');
+            var lunarEl = document.getElementById('lunar-text');
+            var zodiacTag = document.getElementById('zodiac-tag');
+            var zodiacs = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+
+            if (lunarCache[dateStr]) {
+                var cached = lunarCache[dateStr];
+                lunarEl.textContent = '农历：' + cached.lunarStr;
+                zodiacTag.textContent = cached.zodiac + '年';
+                document.getElementById('lunar-info').style.display = 'flex';
+                return;
+            }
+
+            lunarEl.textContent = '正在计算农历...';
+            zodiacTag.textContent = '';
+            document.getElementById('lunar-info').style.display = 'flex';
+
+            function doCalc() {
+                try {
+                    if (window.__lunarCalc) {
+                        var r = window.__lunarCalc({year: year, month: month, day: day});
+                        if (r && r.lunar) {
+                            var lunarStr = '';
+                            var zodiac = '';
+                            // Use formatLunar if available (lunar@2.0.0)
+                            if (window.__formatLunar) {
+                                lunarStr = window.__formatLunar(r.lunar);
+                            } else {
+                                lunarStr = r.lunar.year + '年' + r.lunar.month + '月' + r.lunar.day + '日';
+                            }
+                            // Extract zodiac from yearBranch in formatLunarParts
+                            if (window.__formatLunarParts) {
+                                var parts = window.__formatLunarParts(r.lunar);
+                                var brToZ = {'子':'鼠','丑':'牛','寅':'虎','卯':'兔','辰':'龙','巳':'蛇','午':'马','未':'羊','申':'猴','酉':'鸡','戌':'狗','亥':'猪'};
+                                for (var i = 0; i < parts.length; i++) {
+                                    if (parts[i].type === 'yearBranch') {
+                                        zodiac = brToZ[parts[i].value] || '';
+                                        break;
+                                    }
+                                }
+                            }
+                            // Fallback zodiac: lunar year - 4 mod 12
+                            if (!zodiac) {
+                                var idx = ((r.lunar.year - 4) % 12 + 12) % 12;
+                                zodiac = zodiacs[idx];
+                            }
+                            lunarCache[dateStr] = {lunarStr: lunarStr, zodiac: zodiac};
+                            lunarEl.textContent = '农历：' + lunarStr;
+                            zodiacTag.textContent = zodiac + '年';
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Lunar calc error:', e);
+                }
+                var idx = ((year - 4) % 12 + 12) % 12;
+                var zodiac = zodiacs[idx];
+                lunarEl.textContent = '农历信息加载失败，请检查网络';
+                zodiacTag.textContent = zodiac + '年';
+            }
+
+            if (window.__lunarReady) {
+                doCalc();
+            } else {
+                window.addEventListener('lunar-ready', function once() {
+                    window.removeEventListener('lunar-ready', once);
+                    doCalc();
+                });
+                setTimeout(function() {
+                    if (lunarEl.textContent === '正在计算农历...') doCalc();
+                }, 2000);
+            }
+        }
+
+        function updateShichenInfo() {
+            const hour = parseInt(document.getElementById('birth-hour').value);
+            if (!hour && hour !== 0) {
+                document.getElementById('shichen-info').style.display = 'none';
+                return;
+            }
+            const idx = shichenHour.findIndex(h => h === hour);
+            document.getElementById('shichen-info').style.display = 'flex';
+            const range = idx === 0 ? '23:00-00:59' : (shichenHour[idx-1]) + ':00-' + (hour + 1) + ':59';
+            document.getElementById('shichen-text').textContent = '对应时辰：' + shichen[idx] + '（' + range + '）';
+        }
+
+        function selectGender(gender) {
+            selectedGender = gender;
+            document.getElementById('gender-boy').classList.toggle('active', gender === 'boy');
+            document.getElementById('gender-girl').classList.toggle('active', gender === 'girl');
+        }
+        function selectNameLength(len) {
+            selectedNameLength = len;
+            document.getElementById('length-2').className = 'flex-1 name-length-btn' + (len===2?' active':'');
+            document.getElementById('length-3').className = 'flex-1 name-length-btn' + (len===3?' active':'');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function showLoading() { document.getElementById('loadingOverlay').classList.add('show'); }
+        function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+
+        async function submitForm() {
+            const surname = document.getElementById('surname').value.trim();
+            const year = document.getElementById('birth-year').value;
+            const month = document.getElementById('birth-month').value;
+            const day = document.getElementById('birth-day').value;
+            const hour = document.getElementById('birth-hour').value;
+            const minute = document.getElementById('birth-minute').value;
+
+            if (!surname) { showToast('请输入姓氏'); return; }
+            if (!year || !month || !day) { showToast('请选择完整出生日期'); return; }
+            if (hour === '') { showToast('请选择出生时辰'); return; }
+
+            // 检查余额
+            if (credits <= 0) {
+                showToast('请先兑换起名次数');
+                setTimeout(() => goPage('/pages/redeem.html'), 1500);
+                return;
+            }
+
+            // 扣次数
+            credits--;
+            localStorage.setItem('naming_credits', credits);
+
+            const birthday = year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+            const birthtime = (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + (minute || '00');
+            const dateKey = year + String(month).padStart(2, '0') + String(day).padStart(2, '0');
+            const lunarBirthday = lunarCache[dateKey] ? lunarCache[dateKey].lunarStr : null;
+
+            // 收集偏好
+            const prefs = [];
+            document.querySelectorAll('.tag-chip.selected').forEach(c => prefs.push(c.dataset.tag));
+
+            showLoading();
+
+            // 调用AI生成接口
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 25000);
+
+                const response = await fetch(API_BASE + '/naming', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        surname: surname,
+                        gender: selectedGender,
+                        birthday: birthday,
+                        birthtime: birthtime,
+                        lunar_birthday: lunarBirthday,
+                        nameLength: selectedNameLength,
+                        preferences: prefs
+                    })
+                });
+                clearTimeout(timeoutId);
+                const data = await response.json();
+
+                if (data.names && data.names.length > 0) {
+                    // 同步到数据库
+                    fetch(API_BASE + '/save-record', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            surname: surname,
+                            gender: selectedGender,
+                            birthday: birthday,
+                            birthtime: birthtime,
+                            names: data.names,
+                            bazi: data.bazi_computed || null,
+                            source: data.source || 'local'
+                        })
+                    }).catch(err => console.warn('save-record failed', err));
+
+                    // 保存到历史记录
+                    const record = {
+                        id: Date.now(),
+                        surname,
+                        gender: selectedGender,
+                        birthday,
+                        birthtime,
+                        preferences: prefs,
+                        names: data.names,
+                        bazi: data.bazi_computed || null,
+                        source: data.source || 'local',
+                        createdAt: new Date().toISOString()
+                    };
+                    saveRecord(record);
+
+                    // 跳转结果页
+                    window.location.href = 'result.html';
+                } else {
+                    hideLoading();
+                    showToast('生成失败，请重试');
+                }
+            } catch (e) {
+                console.error(e);
+                hideLoading();
+                // 网络错误时用本地数据
+                const localNames = getLocalNames(selectedGender);
+                const record = {
+                    id: Date.now(),
+                    surname,
+                    gender: selectedGender,
+                    birthday,
+                    birthtime,
+                    preferences: prefs,
+                    names: localNames,
+                    bazi: null,
+                    source: 'local',
+                    createdAt: new Date().toISOString()
+                };
+                saveRecord(record);
+
+                // 同步到数据库
+                fetch(API_BASE + '/save-record', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        surname: surname,
+                        gender: selectedGender,
+                        birthday: birthday,
+                        birthtime: birthtime,
+                        names: localNames,
+                        bazi: null,
+                        source: 'local'
+                    })
+                }).catch(err => console.warn('save-record failed', err));
+
+                window.location.href = 'result.html';
+            }
+        }
+
+        function getLocalNames(gender) {
+            if (gender === 'boy') {
+                return [
+                    {name:'浩然',score:98,meaning:'正气广大，胸怀宽广',source:'《孟子》',wuxing:'水'},
+                    {name:'明轩',score:96,meaning:'聪明睿智，气宇轩昂',source:'成语',wuxing:'土'},
+                    {name:'思远',score:95,meaning:'思虑深远，志存高远',source:'《诗经》',wuxing:'木'},
+                    {name:'一诺',score:97,meaning:'一言九鼎，诚实守信',source:'成语',wuxing:'火'},
+                    {name:'宇航',score:94,meaning:'遨游宇宙，探索未知',source:'现代',wuxing:'土'},
+                    {name:'子墨',score:92,meaning:'文房四宝，诗书传家',source:'诗词',wuxing:'土'}
+                ];
+            } else {
+                return [
+                    {name:'诗涵',score:97,meaning:'诗情画意，含苞待放',source:'《诗经》',wuxing:'水'},
+                    {name:'雨晴',score:96,meaning:'雨过天晴，清新美好',source:'诗词',wuxing:'火'},
+                    {name:'欣怡',score:95,meaning:'欣喜愉悦，心旷神怡',source:'诗词',wuxing:'土'},
+                    {name:'梓萱',score:94,meaning:'生机勃勃，美丽坚强',source:'诗词',wuxing:'木'},
+                    {name:'雅楠',score:95,meaning:'高雅大方，坚韧不拔',source:'成语',wuxing:'木'},
+                    {name:'梦琪',score:94,meaning:'梦回唐朝，美玉无瑕',source:'诗词',wuxing:'木'}
+                ];
+            }
+        }
+
+        function saveRecord(record) {
+            const records = JSON.parse(localStorage.getItem('name_records') || '[]');
+            records.unshift(record);
+            localStorage.setItem('name_records', JSON.stringify(records.slice(0, 100)));
+        }
+
+        function goPage(url) { window.location.href = url; }
+
+        init();
+    </script>
+</body>
+</html>
