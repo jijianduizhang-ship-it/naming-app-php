@@ -1,0 +1,97 @@
+{
+    "pages": [
+        {
+            "path": "pages/home/home",
+            "style": {
+                "navigationBarTitleText": "瑞名阁",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/naming/naming",
+            "style": {
+                "navigationBarTitleText": "宝宝起名",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/result/result",
+            "style": {
+                "navigationBarTitleText": "起名结果",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/name-detail/name-detail",
+            "style": {
+                "navigationBarTitleText": "名字详情",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/history/history",
+            "style": {
+                "navigationBarTitleText": "起名记录",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/profile/profile",
+            "style": {
+                "navigationBarTitleText": "个人中心",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/redeem/redeem",
+            "style": {
+                "navigationBarTitleText": "兑换码",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/about/about",
+            "style": {
+                "navigationBarTitleText": "关于我们",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/knowledge/knowledge",
+            "style": {
+                "navigationBarTitleText": "起名知识",
+                "navigationStyle": "custom"
+            }
+        }
+    ],
+    "globalStyle": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "瑞名阁",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8"
+    },
+    "tabBar": {
+        "color": "#999999",
+        "selectedColor": "#C41E3A",
+        "backgroundColor": "#FFFFFF",
+        "borderStyle": "black",
+        "list": [
+            {
+                "pagePath": "pages/home/home",
+                "text": "首页"
+            },
+            {
+                "pagePath": "pages/naming/naming",
+                "text": "起名"
+            },
+            {
+                "pagePath": "pages/history/history",
+                "text": "记录"
+            },
+            {
+                "pagePath": "pages/profile/profile",
+                "text": "我的"
+            }
+        ]
+    }
+}

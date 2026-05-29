@@ -1,0 +1,23 @@
+{
+    "name": "ruimingge-miniprogram",
+    "version": "1.0.0",
+    "description": "瑞名阁 - 智能起名系统微信小程序",
+    "main": "main.js",
+    "scripts": {
+        "dev:mp-weixin": "uni -p mp-weixin",
+        "build:mp-weixin": "uni build -p mp-weixin"
+    },
+    "dependencies": {
+        "@dcloudio/uni-app": "^3.0.0",
+        "@dcloudio/uni-components": "^3.0.0",
+        "@dcloudio/uni-mp-weixin": "^3.0.0",
+        "vue": "^3.0.0"
+    },
+    "devDependencies": {
+        "@dcloudio/types": "^3.0.0",
+        "@dcloudio/uni-cli-shared": "^3.0.0",
+        "@dcloudio/vite-plugin-uni": "^3.0.0",
+        "sass": "^1.69.0",
+        "vite": "^4.0.0"
+    }
+}
