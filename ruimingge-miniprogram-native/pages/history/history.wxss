@@ -1,0 +1,112 @@
+.container {
+  padding: 30rpx;
+  padding-bottom: 120rpx;
+}
+
+.header-actions {
+  margin-bottom: 30rpx;
+}
+
+.filter-btn {
+  color: #C41E3A;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.clear-btn {
+  color: #8B6F63;
+  font-size: 26rpx;
+}
+
+.empty-state {
+  padding: 120rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 30rpx;
+  display: block;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #534138;
+  margin-bottom: 15rpx;
+  display: block;
+}
+
+.empty-hint {
+  font-size: 26rpx;
+  color: #8B6F63;
+  display: block;
+}
+
+.record-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.record-card {
+  background: white;
+  border-radius: 28rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 32rpx rgba(139, 26, 26, 0.08);
+}
+
+.record-main {
+  margin-bottom: 20rpx;
+}
+
+.record-header {
+  margin-bottom: 15rpx;
+}
+
+.record-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #534138;
+}
+
+.record-favorite {
+  font-size: 28rpx;
+}
+
+.score-badge {
+  background: linear-gradient(135deg, #C41E3A, #E8837C);
+  color: white;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.score-text {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.score-label {
+  font-size: 18rpx;
+}
+
+.record-meaning {
+  font-size: 26rpx;
+  color: #6B5A50;
+  display: block;
+}
+
+.record-footer {
+  padding-top: 20rpx;
+  border-top: 1rpx solid #F0E8E0;
+}
+
+.record-time {
+  font-size: 22rpx;
+  color: #A8988C;
+}
+
+.delete-btn {
+  font-size: 24rpx;
+  color: #E8837C;
+}

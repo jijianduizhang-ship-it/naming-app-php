@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="header text-center">
+    <text class="title">起名知识库</text>
+    <text class="subtitle">了解起名知识，取个好名字</text>
+  </view>
+
+  <view wx:if="{{articles.length === 0}}" class="empty-state">
+    <text class="empty-icon">📚</text>
+    <text class="empty-text">暂无文章</text>
+  </view>
+
+  <view wx:else class="article-list space-y-4">
+    <view class="article-card" wx:for="{{articles}}" wx:key="id" data-article="{{item}}" bindtap="readArticle">
+      <text class="article-title">{{item.title}}</text>
+      <text class="article-preview">{{item.preview}}</text>
+      <view class="article-footer">
+        <text class="read-more">阅读全文 ›</text>
+      </view>
+    </view>
+  </view>
+</view>

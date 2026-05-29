@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="card mb-5">
+    <text class="section-title">兑换次数</text>
+    <text class="section-hint">输入兑换码获取更多起名机会</text>
+    <input class="code-input" placeholder="请输入兑换码" value="{{code}}" bindinput="handleInput" />
+    <button class="btn-primary btn-full" bindtap="redeem">立即兑换</button>
+    <view class="tips mt-4">
+      <text class="tips-title">💡 提示</text>
+      <text class="tips-text">输入 "TEST" 可兑换3次免费机会</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{history.length > 0}}">
+    <text class="section-title">兑换记录</text>
+    <view class="history-list space-y-3">
+      <view class="history-item" wx:for="{{history}}" wx:key="index">
+        <view class="history-info">
+          <text class="history-code">{{item.code}}</text>
+          <text class="history-time">{{item.time}}</text>
+        </view>
+        <view class="history-amount">+{{item.amount}}次</view>
+      </view>
+    </view>
+  </view>
+</view>

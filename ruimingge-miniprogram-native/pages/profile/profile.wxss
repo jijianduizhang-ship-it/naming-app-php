@@ -1,0 +1,106 @@
+.container {
+  padding-top: 20rpx 30rpx 30rpx;
+}
+
+.profile-header {
+  text-align: center;
+  padding: 60rpx 0 50rpx;
+}
+
+.avatar {
+  width: 140rpx;
+  height: 140rpx;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60rpx;
+  box-shadow: 0 4rpx 32rpx rgba(139, 26, 26, 0.08);
+  margin: 0 auto 25rpx;
+}
+
+.username {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #534138;
+}
+
+.credits-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 35rpx;
+  margin-bottom: 40rpx;
+}
+
+.credits-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.credits-label {
+  font-size: 26rpx;
+  color: #8B6F63;
+  margin-bottom: 15rpx;
+}
+
+.credits-display {
+  display: flex;
+  align-items: baseline;
+}
+
+.credits-amount {
+  font-size: 56rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, #C41E3A, #E8837C);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.credits-unit {
+  font-size: 28rpx;
+  color: #C41E3A;
+}
+
+.btn-sm {
+  font-size: 26rpx;
+  padding: 18rpx 35rpx;
+  height: auto;
+  line-height: 1.4;
+}
+
+.menu-list {
+  background: white;
+  border-radius: 28rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 32rpx rgba(139, 26, 26, 0.08);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 35rpx;
+  border-bottom: 1rpx solid #F0E8E0;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-icon {
+  font-size: 40rpx;
+  margin-right: 24rpx;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #534138;
+}
+
+.menu-arrow {
+  font-size: 40rpx;
+  color: #A8988C;
+}

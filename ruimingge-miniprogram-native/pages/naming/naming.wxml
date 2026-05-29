@@ -1,0 +1,48 @@
+<view class="container">
+  <view class="card mb-5">
+    <view class="credits-display flex items-center justify-between">
+      <text class="credits-label">剩余起名次数</text>
+      <view class="flex items-center space-x-2">
+        <text class="credits-amount">{{credits}}</text>
+        <text class="credits-text">次</text>
+      </view>
+    </view>
+    <view class="text-center">
+      <text class="btn-link" bindtap="goToRedeem">获取更多次数</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="form-label">姓氏 <text class="required">*</text></view>
+    <input class="form-input" placeholder="请输入姓氏" value="{{surname}}" data-field="surname" bindinput="handleInput" />
+
+    <view class="form-label mb-4">性别 <text class="required">*</text></view>
+    <view class="gender-select">
+      <view class="gender-option {{gender === 'male' ? 'active' : ''}}" data-gender="male" bindtap="setGender">
+        <text class="gender-icon">👦</text>
+        <text>男</text>
+      </view>
+      <view class="gender-option {{gender === 'female' ? 'active' : ''}}" data-gender="female" bindtap="setGender">
+        <text class="gender-icon">👧</text>
+        <text>女</text>
+      </view>
+    </view>
+
+    <view class="form-label">出生日期</view>
+    <picker mode="date" value="{{birthday}}" bindchange="handleInput" data-field="birthday">
+      <view class="form-input picker-input">
+        {{birthday || '请选择日期'}}
+      </view>
+    </picker>
+
+    <view class="form-label">字辈（可选）</view>
+    <input class="form-input" placeholder="如：文、明、正" value="{{generation}}" data-field="generation" bindinput="handleInput" />
+
+    <view class="form-label">特殊要求（可选）</view>
+    <textarea class="form-textarea" placeholder="如：避免某些字、希望体现某种寓意等" value="{{requirements}}" data-field="requirements" bindinput="handleInput" />
+
+    <button class="btn-primary btn-full" bindtap="generateNames" disabled="{{loading}}">
+      {{loading ? '正在生成...' : '开始起名'}}
+    </button>
+  </view>
+</view>

@@ -1,0 +1,33 @@
+<view class="container">
+  <view class="hero-section">
+    <view class="hero-content">
+      <text class="logo-text">瑞名阁</text>
+      <text class="hero-subtitle">传承千年智慧 · 成就美好人生</text>
+      <button class="btn-primary btn-lg" bindtap="goToNaming">
+        开始起名
+      </button>
+    </view>
+  </view>
+
+  <view class="features-section">
+    <view class="section-title">为什么选择我们</view>
+    <view class="features-grid">
+      <view class="feature-card" wx:for="{{features}}" wx:key="title">
+        <view class="feature-icon">{{item.icon}}</view>
+        <text class="feature-title">{{item.title}}</text>
+        <text class="feature-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="quick-links">
+    <view class="link-card" bindtap="goToKnowledge">
+      <text class="link-title">起名知识库</text>
+      <text class="link-desc">了解更多起名知识</text>
+    </view>
+    <view class="link-card" bindtap="goToAbout">
+      <text class="link-title">关于我们</text>
+      <text class="link-desc">认识瑞名阁</text>
+    </view>
+  </view>
+</view>

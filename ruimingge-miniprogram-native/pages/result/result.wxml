@@ -1,0 +1,32 @@
+<view class="container">
+  <view class="result-header">
+    <text class="result-title">为您精选的好名字</text>
+    <text class="result-subtitle">共 {{names.length}} 个名字供您选择</text>
+  </view>
+
+  <view class="name-list space-y-4">
+    <view class="name-card" wx:for="{{names}}" wx:key="id" data-name="{{item}}" bindtap="viewDetail">
+      <view class="name-header flex items-center justify-between">
+        <view class="flex items-center space-x-3">
+          <text class="name-text">{{item.name}}</text>
+          <text class="name-pinyin">{{item.pinyin}}</text>
+        </view>
+        <view class="score-badge">
+          <text class="score-text">{{item.score}}</text>
+          <text class="score-label">分</text>
+        </view>
+      </view>
+      <text class="name-meaning">{{item.meaning}}</text>
+      <view class="name-tags flex space-x-2">
+        <text class="tag">{{item.wuxing}}</text>
+        <text class="tag">{{item.strokes}}画</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="mt-4">
+    <button class="btn-outline" bindtap="goBack">
+      重新起名
+    </button>
+  </view>
+</view>

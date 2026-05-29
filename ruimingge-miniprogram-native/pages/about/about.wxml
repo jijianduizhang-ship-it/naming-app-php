@@ -1,0 +1,56 @@
+<view class="container">
+  <view class="header text-center">
+    <view class="logo">🏮</view>
+    <text class="app-name">瑞名阁</text>
+    <text class="app-version">版本 1.0.0</text>
+  </view>
+
+  <view class="card mb-5">
+    <text class="section-title">关于我们</text>
+    <text class="content-text">
+      瑞名阁是一款专注于为宝宝取好名字的智能起名应用。我们融合了传统命理学与现代科技，
+      为您提供专业、贴心的起名服务。
+    </text>
+  </view>
+
+  <view class="card mb-5">
+    <text class="section-title">我们的特色</text>
+    <view class="feature-list space-y-3">
+      <view class="feature-item">
+        <text class="feature-icon">📜</text>
+        <view class="feature-content">
+          <text class="feature-title">传统智慧</text>
+          <text class="feature-desc">结合生辰八字、五行相生相克原理</text>
+        </view>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">🎨</text>
+        <view class="feature-content">
+          <text class="feature-title">优美寓意</text>
+          <text class="feature-desc">精选诗词典故，赋予名字深厚内涵</text>
+        </view>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">⭐</text>
+        <view class="feature-content">
+          <text class="feature-title">智能评分</text>
+          <text class="feature-desc">多维度综合评估，助您选到好名字</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <text class="section-title">联系我们</text>
+    <view class="contact-list">
+      <view class="contact-item">
+        <text class="contact-label">官方网站</text>
+        <text class="contact-value">www.ruimingge.com</text>
+      </view>
+      <view class="contact-item">
+        <text class="contact-label">客服邮箱</text>
+        <text class="contact-value">support@ruimingge.com</text>
+      </view>
+    </view>
+  </view>
+</view>

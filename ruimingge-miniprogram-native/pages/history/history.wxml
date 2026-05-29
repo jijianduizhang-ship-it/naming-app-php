@@ -1,0 +1,38 @@
+<view class="container">
+  <view class="header-actions flex items-center justify-between mb-5">
+    <view class="filter-btn" bindtap="toggleFilter">
+      {{showFavoritesOnly ? '显示全部' : '只看收藏'}}
+    </view>
+    <view class="clear-btn" wx:if="{{records.length > 0}}" bindtap="clearAll">
+      清空全部
+    </view>
+  </view>
+
+  <view wx:if="{{records.length === 0}}" class="empty-state text-center">
+    <text class="empty-icon">📝</text>
+    <text class="empty-text">暂无历史记录</text>
+    <text class="empty-hint">去生成一些好名字吧！</text>
+  </view>
+
+  <view wx:else class="record-list space-y-4">
+    <view class="record-card" wx:for="{{records}}" wx:key="id">
+      <view class="record-main" data-record="{{item}}" bindtap="viewDetail">
+        <view class="record-header flex items-center justify-between">
+          <view class="flex items-center space-x-3">
+            <text class="record-name">{{item.name}}</text>
+            <text class="record-favorite" wx:if="{{item.favorite}}">❤️</text>
+          </view>
+          <view class="score-badge">
+            <text class="score-text">{{item.score}}</text>
+            <text class="score-label">分</text>
+          </view>
+        </view>
+        <text class="record-meaning">{{item.meaning}}</text>
+      </view>
+      <view class="record-footer flex items-center justify-between">
+        <text class="record-time">{{item.createdAt}}</text>
+        <view class="delete-btn" data-id="{{item.id}}" bindtap="deleteRecord">删除</view>
+      </view>
+    </view>
+  </view>
+</view>

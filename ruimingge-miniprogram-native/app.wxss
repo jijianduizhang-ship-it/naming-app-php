@@ -1,0 +1,82 @@
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background-color: #F5F0EB;
+  min-height: 100vh;
+  font-size: 28rpx;
+  color: #534138;
+}
+
+.container {
+  padding: 0 30rpx;
+}
+
+.card {
+  background: white;
+  border-radius: 28rpx;
+  box-shadow: 0 4rpx 32rpx rgba(139, 26, 26, 0.08);
+  padding: 30rpx;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #C41E3A, #E8837C);
+  color: white;
+  border-radius: 28rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  border: none;
+  box-shadow: 0 8rpx 40rpx rgba(196, 30, 58, 0.3);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.mb-4 {
+  margin-bottom: 24rpx;
+}
+
+.mb-5 {
+  margin-bottom: 30rpx;
+}
+
+.mt-4 {
+  margin-top: 24rpx;
+}
+
+.space-y-3 > view:not(:last-child) {
+  margin-bottom: 24rpx;
+}
+
+.space-x-2 > view:not(:last-child),
+.space-x-2 > text:not(:last-child) {
+  margin-right: 8rpx;
+}
+
+.space-x-3 > view:not(:last-child),
+.space-x-3 > text:not(:last-child) {
+  margin-right: 12rpx;
+}

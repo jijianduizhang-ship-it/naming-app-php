@@ -1,0 +1,142 @@
+.container {
+  padding-bottom: 40rpx;
+}
+
+.detail-header {
+  background: white;
+  border-radius: 28rpx;
+  padding: 60rpx 40rpx 50rpx;
+  box-shadow: 0 4rpx 32rpx rgba(139, 26, 26, 0.08);
+  margin-bottom: 40rpx;
+  position: relative;
+}
+
+.header-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-name {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 72rpx;
+  background: linear-gradient(135deg, #C41E3A, #E8837C);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10rpx;
+}
+
+.detail-pinyin {
+  font-size: 32rpx;
+  color: #8B6F63;
+  margin-bottom: 30rpx;
+}
+
+.score-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.score-number {
+  font-size: 60rpx;
+  font-weight: 700;
+  background: linear-gradient(135deg, #C41E3A, #E8837C);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.score-unit {
+  font-size: 28rpx;
+  color: #C41E3A;
+}
+
+.score-label {
+  font-size: 24rpx;
+  color: #8B6F63;
+  margin-top: 8rpx;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 30rpx;
+  right: 30rpx;
+  font-size: 48rpx;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  background: white;
+  border-radius: 28rpx;
+  padding: 40rpx 35rpx;
+  box-shadow: 0 4rpx 32rpx rgba(139, 26, 26, 0.08);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #534138;
+  margin-bottom: 24rpx;
+  display: block;
+}
+
+.meaning-text {
+  font-size: 30rpx;
+  line-height: 1.8;
+  color: #534138;
+  display: block;
+}
+
+.analysis-text {
+  font-size: 28rpx;
+  line-height: 1.8;
+  color: #6B5A50;
+  display: block;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30rpx;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30rpx;
+  background: #F8F4F0;
+  border-radius: 20rpx;
+}
+
+.info-label {
+  font-size: 24rpx;
+  color: #8B6F63;
+  margin-bottom: 10rpx;
+}
+
+.info-value {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #C41E3A;
+}
+
+.poem-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.poem-item {
+  padding: 24rpx;
+  background: #FFF5F5;
+  border-left: 4rpx solid #C41E3A;
+  font-size: 26rpx;
+  color: #534138;
+  line-height: 1.8;
+  border-radius: 0 12rpx 12rpx 0;
+}
